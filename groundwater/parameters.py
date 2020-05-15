@@ -41,6 +41,7 @@ class Parameters:
         'Width',
         'Horizontal Transverse Dispersivity',
         'Contaminant Concentration',
+        'Gamma',
         'Reactant Concentration',
         'Model Plume Length'
     ]
