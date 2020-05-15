@@ -51,8 +51,9 @@ Please note :
   xii.	MySQL Installer is configuring MySQL database server. Wait until it is done and click the Next button to continue.
   xiii.	After completing the setup, you can now navigate to the MySQL Workbench. In the workbench, you will see the root user, click on that and enter the password that you had saved before.
   xiv.	Now, type on the workbench : `create database groundwater` and exit the workbench
-  xv.	Go back to the opened command line and cd back to the cloned folder by doing : `cd../../`
-  xvi.	Type `python` on the command line and then type the following lines :
+  xv. In the config.py change the ‘SQLALCHEMY_DATABASE_URI’ entry according to your password for root : 'mysql://root:your_password_here@localhost/groundwater' 
+  xvi.	Go back to the opened command line and cd back to the cloned folder by doing : `cd../../`
+  xvii.	Type `python` on the command line and then type the following lines :
     a. `from groundwater import db`
     b. `from groundwater.models import User`
     c.  `db.create_all()`
@@ -62,8 +63,7 @@ MySql Setup : (Linux)
   ii.	After installing MySQL, follow steps xiv – xvi from the windows mysql setup for the command line in your system.
 
 5. Make changes in some files according to your file system :
-  i.	In the config.py change the ‘SQLALCHEMY_DATABASE_URI’ entry according to your password for root : 'mysql://root:your_password_here@localhost/groundwater'
-  ii.	For numerical model : 
+  i.	For numerical model : 
   a.	In groundwater/water.py, last function in the code(numericalModel) : 
           parent_dir = 'your_directory/Water'
   b.	In groundwater/NumericalModel/numericalModel.py :
