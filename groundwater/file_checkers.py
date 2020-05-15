@@ -25,12 +25,12 @@ def allowed_file(check_file, current_user, current_table, db):
         check = check_file(plume, current_user, current_table, db)
         if check:
             flash(f'Successfully uploaded the file {filename}', category='success')
-        else:
-            flash(f'Problem parsing the parameters.\n'
-                  f'Please check that parameter heading and values for parameters are matching'
-                  f' the permitted codes.\n'
-                  f'Kindly refer to the sample csv file for details.',
-                  category='danger')
+        # else:
+        #     flash(f'Problem parsing the parameters.\n'
+        #           f'Please check that parameter heading and values for parameters are matching'
+        #           f' the permitted codes.\n'
+        #           f'Kindly refer to the sample csv file for details.',
+        #           category='danger')
     else:
         flash('Incorrect file type!', category='danger')
         return redirect(request.url)
@@ -38,6 +38,15 @@ def allowed_file(check_file, current_user, current_table, db):
 
 def allowed_extension(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in Parameters.Extensions.ALLOWED_EXTENSIONS
+
+
+def convert_and_clean_inputs_database(plume, parameter_name):
+    parameter = plume[parameter_name].values.tolist()
+    parameter = [x for x in parameter if str(x) != 'nan']
+    for idx, item in enumerate(parameter):
+        if item == -1:
+            parameter[idx] = None
+    return parameter
 
 
 def convert_and_clean_inputs(plume, parameter_name):
@@ -48,21 +57,21 @@ def convert_and_clean_inputs(plume, parameter_name):
 
 def check_file_for_database(plume, current_user, User_Database, db):
     try:
-        lMax = convert_and_clean_inputs(plume, 'Plume length[m]')
-        site = convert_and_clean_inputs(plume, 'Site Unit')
-        compound = convert_and_clean_inputs(plume, 'Compound')
-        atv = convert_and_clean_inputs(plume, 'Aquifer thickness[m]')
-        w = convert_and_clean_inputs(plume, 'Plume Width[m]')
-        hc = convert_and_clean_inputs(plume, 'Hydraulic conductivity[10-3 [m/s]]')
-        ed = convert_and_clean_inputs(plume, 'Electron Donor[mg/l]')
-        o2 = convert_and_clean_inputs(plume, 'Electron Acceptors : O2[mg/l]')
-        no3 = convert_and_clean_inputs(plume, 'NO3[mg/l]')
-        so4 = convert_and_clean_inputs(plume, 'SO4[mg/l]')
-        fe = convert_and_clean_inputs(plume, 'Fe(II)[mg/l]')
-        ps = convert_and_clean_inputs(plume, 'Plume state')
-        cg = convert_and_clean_inputs(plume, 'Chem. Group')
-        cy = convert_and_clean_inputs(plume, 'Country')
-        ls = convert_and_clean_inputs(plume, 'Literature Source')
+        lMax = convert_and_clean_inputs_database(plume, 'Plume length[m]')
+        site = convert_and_clean_inputs_database(plume, 'Site Unit')
+        compound = convert_and_clean_inputs_database(plume, 'Compound')
+        atv = convert_and_clean_inputs_database(plume, 'Aquifer thickness[m]')
+        w = convert_and_clean_inputs_database(plume, 'Plume Width[m]')
+        hc = convert_and_clean_inputs_database(plume, 'Hydraulic conductivity[10-3 [m/s]]')
+        ed = convert_and_clean_inputs_database(plume, 'Electron Donor[mg/l]')
+        o2 = convert_and_clean_inputs_database(plume, 'Electron Acceptors : O2[mg/l]')
+        no3 = convert_and_clean_inputs_database(plume, 'NO3[mg/l]')
+        so4 = convert_and_clean_inputs_database(plume, 'SO4[mg/l]')
+        fe = convert_and_clean_inputs_database(plume, 'Fe(II)[mg/l]')
+        ps = convert_and_clean_inputs_database(plume, 'Plume state')
+        cg = convert_and_clean_inputs_database(plume, 'Chem. Group')
+        cy = convert_and_clean_inputs_database(plume, 'Country')
+        ls = convert_and_clean_inputs_database(plume, 'Literature Source')
         plume_length = len(lMax)
         for i in range(plume_length):
             user_db = User_Database(
@@ -133,6 +142,7 @@ def check_file_for_ham_equation(plume, current_user, Ham, db):
         m = convert_and_clean_inputs(plume, 'Discharge')
         tv = convert_and_clean_inputs(plume, 'Horizontal Transverse Dispersivity')
         ca = convert_and_clean_inputs(plume, 'Contaminant Concentration')
+        a = convert_and_clean_inputs(plume, 'Gamma')
         cd = convert_and_clean_inputs(plume, 'Reactant Concentration')
         plume_length = len(m)
         for i in range(plume_length):
@@ -140,7 +150,8 @@ def check_file_for_ham_equation(plume, current_user, Ham, db):
                 Width=m[i], Horizontal_Transverse_Dispersivity=tv[i],
                 Contaminant_Concentration=ca[i],
                 Reactant_Concentration=cd[i],
-                Model_Plume_Length=((m[i] * m[i]) / (4 * math.pi * tv[i])) * ((cd[i] / ca[i]) ** 2),
+                Gamma=a[i],
+                Model_Plume_Length=((m[i] * m[i]) / (4 * math.pi * tv[i])) * (((a[i]*cd[i]) / ca[i]) ** 2),
                 ham=current_user
             )
             db.session.add(ham)
