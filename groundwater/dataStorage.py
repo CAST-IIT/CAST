@@ -69,6 +69,7 @@ def data_ham(user_id):
             data.Horizontal_Transverse_Dispersivity,
             data.Contaminant_Concentration,
             data.Reactant_Concentration,
+            data.Gamma,
             data.Model_Plume_Length
         ])
     return table_data
