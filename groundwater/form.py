@@ -1,7 +1,8 @@
 from flask_login import current_user
 from flask_wtf import FlaskForm
+from math import e
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, FloatField, IntegerField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, InputRequired, NumberRange
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, InputRequired, NumberRange, Regexp
 
 from groundwater.models import User
 
@@ -59,8 +60,8 @@ class UpdateAccountForm(FlaskForm):
             user = User.query.filter_by(email=email.data).first()
             if user:
                 raise ValidationError('That email is taken. Please choose another one')
-                
-                
+
+
 class RequestResetForm(FlaskForm):
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
@@ -71,18 +72,23 @@ class RequestResetForm(FlaskForm):
         if user is None:
             raise ValidationError('There is no account with that email. You must register first.')
 
-            
+
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
 
+#
+# def less_than(FlaskForm, field):
+#     if field.data
+#         raise ValidationError('Field must be less than 5')
+
 
 class UserDatabaseForm(FlaskForm):
     Site_Unit = StringField('Site Unit', validators=[DataRequired()])
     Compound = StringField('Compound', validators=[DataRequired()])
-    Aquifer_thickness = FloatField('Aquifer Thickness', validators=[DataRequired()])
+    Aquifer_thickness = FloatField('Aquifer Thickness', validators=[DataRequired(), ])
     Plume_length = FloatField('Plume Length', validators=[DataRequired()])
     Plume_Width = FloatField('Plume Width', validators=[DataRequired()])
     Hydraulic_conductivity = FloatField('Hydraulic Conductivity', validators=[DataRequired()])
@@ -122,6 +128,7 @@ class HamForm(FlaskForm):
     Horizontal_Transverse_Dispersivity = FloatField('Horizontal Transverse Dispersivity', validators=[DataRequired()])
     Contaminant_Concentration = FloatField('Contaminant Concentration', validators=[DataRequired()])
     Reactant_Concentration = FloatField('Reactant Concentration', validators=[DataRequired()])
+    Gamma = FloatField('Gamma', validators=[DataRequired()])
     submit = SubmitField('Generate Graph')
 
 
@@ -138,12 +145,12 @@ class Liedl3DForm(FlaskForm):
 
 
 class BirlaForm(FlaskForm):
-    Aquifer_thickness = FloatField('Aquifer Thickness', validators=[DataRequired()])
-    Vertical_Transverse_Dispersivity = FloatField('Vertical Transverse Dispersivity', validators=[DataRequired()])
-    Stoichiometry_coefficient = FloatField('Stoichiometry coefficient', validators=[DataRequired()])
-    Contaminant_Concentration = FloatField('Contaminant Concentration', validators=[DataRequired()])
-    Reactant_Concentration = FloatField('Reactant Concentration', validators=[DataRequired()])
-    Recharge_Rate = FloatField('Recharge Rate', validators=[DataRequired()])
+    Aquifer_thickness = FloatField('Aquifer Thickness', validators=[InputRequired()])
+    Vertical_Transverse_Dispersivity = FloatField('Vertical Transverse Dispersivity', validators=[InputRequired()])
+    Stoichiometry_coefficient = FloatField('Stoichiometry coefficient', validators=[InputRequired()])
+    Contaminant_Concentration = FloatField('Contaminant Concentration', validators=[InputRequired()])
+    Reactant_Concentration = FloatField('Reactant Concentration', validators=[InputRequired()])
+    Recharge_Rate = FloatField('Recharge Rate', validators=[InputRequired()])
     submit = SubmitField('Generate Graph')
 
 
