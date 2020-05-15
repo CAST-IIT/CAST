@@ -5,6 +5,7 @@ function plotScatterData(thickness, dispersivity) {
 				Dispersivity : dispersivity,
                 Acceptor : $('#Acceptor').val(),
                 Donor : $('#Donor').val(),
+                Stoichiometric : $('#Stoichiometric').val(),
                 Porosity : $('#Porosity').val(),
 				Result : $('#Thickness').val()
 			},
