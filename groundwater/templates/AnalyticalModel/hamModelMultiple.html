@@ -88,6 +88,19 @@
                             {% endif%}
                     </div>
                     <div class="form-group">
+                        {{form.Gamma.label(class="form-control-label")}}
+                        {% if form.Gamma.errors %}
+                                {{form.Gamma(class="form-control form-control-lg is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.Gamma.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor%}
+                                </div>
+                            {% else %}
+                                {{form.Gamma(class="form-control form-control-lg")}}
+                            {% endif%}
+                   </div>
+                    <div class="form-group">
                         {{form.Reactant_Concentration.label(class="form-control-label")}}
                         {% if form.Reactant_Concentration.errors %}
                                 {{form.Reactant_Concentration(class="form-control form-control-lg is-invalid")}}
