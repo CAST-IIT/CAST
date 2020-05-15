@@ -505,13 +505,27 @@ def hamModelSingle():
     return render_template('AnalyticalModel/hamModelSingle.html', year_histogram=year_histogram)
 
 
+@app.route('/hamModelSingle', methods=['POST', 'GET'])
+def hamModelSingle():
+    Q = 5
+    Ath = 0.01
+    Ca = 8
+    Cd = 5
+    a = 3.5
+    lMax = ((Q * Q) / (4 * math.pi * Ath)) * (((a*Cd) / Ca) ** 2)
+    lMax = "%.2f" % lMax
+    year_histogram = create_singlePlot(lMax)
+    return render_template('AnalyticalModel/hamModelSingle.html', year_histogram=year_histogram)
+
+
 @app.route('/hamEtAlSinglePlot', methods=['POST'])
 def hamEtAlSinglePlot():
     Q = float(request.form['Thickness'])
     Ath = float(request.form['Dispersivity'])
     Ca = float(request.form['Acceptor'])
     Cd = float(request.form['Donor'])
-    lMax = ((Q * Q) / (4 * math.pi * Ath)) * ((Cd / Ca) ** 2)
+    a = float(request.form['Stoichiometric'])
+    lMax = ((Q * Q) / (4 * math.pi * Ath)) * (((a*Cd) / Ca) ** 2)
     lMax = "%.2f" % lMax
     year_histogram = create_singlePlot(lMax)
     return jsonify({'Result': lMax, 'data': render_template('graphSingleResult.html', year_histogram=year_histogram)})
@@ -526,10 +540,11 @@ def hamModelMultiple():
         Ath = form.Horizontal_Transverse_Dispersivity.data
         Ca = form.Contaminant_Concentration.data
         Cd = form.Reactant_Concentration.data
-        lMax = ((Q * Q) / (4 * math.pi * Ath)) * ((Cd / Ca) ** 2)
+        a = form.Gamma.data
+        lMax = ((Q * Q) / (4 * math.pi * Ath)) * (((a*Cd) / Ca) ** 2)
         lMax = "%.2f" % lMax
         ham = Ham(Width=Q, Horizontal_Transverse_Dispersivity=Ath,
-                  Contaminant_Concentration=Ca, Reactant_Concentration=Cd, Model_Plume_Length=lMax,
+                  Contaminant_Concentration=Ca, Reactant_Concentration=Cd, Gamma=a, Model_Plume_Length=lMax,
                   ham=current_user)
         db.session.add(ham)
         db.session.commit()
