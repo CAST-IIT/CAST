@@ -73,7 +73,14 @@ MySql Setup : (Linux)
 6.  Starting the server :
   i.	Lastly, go back to the command line where the virtual environment is activated, and inside the cloned folder, type : python3 run.py
   ii.	Go to the browser and type on ‘http://127.0.0.1:5000/’ to access your private CAST browser
-
+  
+7. Setting up the interpreter and Pycharm environment:
+  i. First, open the run.py file in pycharm.
+  ii. Press 'Alt + Ctrl + S' to open Settings. There in the 'Project' tab press dropdown button and press on the Project Interpreter option.
+  iii. Go to the Add interpreter by pressing the settings button at the end of 'Project Interpreter' row.
+  iv. Select New environment option and set Location to the venv folder of the project. Set Base interpreter as the python.exe file inside venv\Scripts.
+  v. Now go to Project Structure option in Settings (Alt + Ctrl + S). There keep the parent directory as the only content root and keep venv as excluded folder. Press Apply. Relaunch the project from pycharm. 
+  
 
 
 
