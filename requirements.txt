@@ -89,3 +89,5 @@ Werkzeug==0.14.1
 widgetsnbextension==3.5.1
 win-unicode-console==0.5
 WTForms==2.2.1
+Flask-Mail==0.9.1
+flopy==3.3.0

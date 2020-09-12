@@ -1,0 +1,36 @@
+{% extends 'baseLayoutDocumentation.html' %}
+{% block title %}Chu et al. (2004){% endblock %}
+{% block li %}
+        <div class="dropdownNew">
+            <button class="dropbtnNew">BioScreen
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-contentNew">
+                <a href="{{ url_for('BioSingle')}}">Single Computing Simulation</a>
+                <a href="{{ url_for('chuEtAlModelMultiple')}}">Multiple Computing Simulation</a>
+            </div>
+        </div>
+{% endblock %}
+{% block content %}
+<h1 id="2.-Horizontal-oriented-2D-Model--–-BioScreen"><strong>Horizontal oriented <u>2D</u> Model</strong>  – BioScreen<a class="anchor-link" href="#2.-Horizontal-oriented-2D-Model--%E2%80%93-Chu-et-al.-(2004)">¶</a></h1><p>This model, based on Chu et al. (2004), provides an estimate of a steady-state plume length ($L_{max}$ ) and investigate the large-time solution behavior of a representative bioreactive transport model under the conditions that the mixing of two required substrate occurs only in the directions transverse to groundwater flow.</p>
+<p><img src="static/chu_fig.jpeg" alt="Output from Chu et al.(2004) model" style="zoom:70%;"></p>
+    <p>Chu et al.(2004) provides the following explicit expression for $L_{max}$:</p>
+<p>$$
+L_{max} = \frac{\pi}{16}\frac{W^2}{\alpha_{TH}}{\bigg(\frac{\gamma C_{ED}^\circ  }{  C_{EA}^\circ - \epsilon }\bigg)^2}
+$$</p>
+<p>in which:</p>
+<p>$W$ = Width of contaminated source [L]<br>
+$\alpha_{TH}$ = Horizontal Transverse Dispersivity [L]<br>
+$\gamma$ = Reaction stoichiometric ratio [ ]<br>
+$C_{ED}^\circ$ = Contaminant (Electron Donor) concentration [ML$^{-1}$]<br>
+$C_{EA}^\circ$ = Partner Reactant (Electron Acceptor) concentration [ML$^{-1}$]<br>
+$\epsilon$ = Biological concentration factor [ML$^{-1}$].</p>
+<p><strong>The model is based on the following assumptions:</strong></p>
+<ol>
+<li>There is a continuous line source of contamination and instantaneous reaction model.</li>
+<li>A dissolved contaminant is assumed to be biodegraded only at its plume fringe because of transverse
+mixing but not inside the plume.</li>
+</ol>
+<p><strong>Reference:</strong></p>
+<p>M. Chu  P. K. Kitanidis  P. L. McCarty. Modeling microbial reactions at the plume fringe subject to transverse mixing in porous media: When can the rates of microbial reaction be assumed to be instantaneous? <a href="https://doi.org/10.1029/2004WR003495">https://doi.org/10.1029/2004WR003495</a></p>
+{% endblock %}

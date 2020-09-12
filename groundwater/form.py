@@ -122,6 +122,22 @@ class ChuForm(FlaskForm):
     Biological_Factor = FloatField('Biological Factor', validators=[InputRequired("Please enter a valid value")])
     submit = SubmitField('Generate Graph')
 
+class BioForm(FlaskForm):
+    Threshold_Concentration = FloatField('Threshold Concentration', validators=[DataRequired()])
+    Time = FloatField('Time', validators=[DataRequired()])
+    Top_Source_Location = FloatField('Top Source Location', validators=[DataRequired()])
+    Input_Concentration = FloatField('Input Concentration', validators=[DataRequired()])
+    Source_Width = FloatField('Source Width', validators=[DataRequired()])
+    Average_Linear_Groundwater_Velocity = FloatField('Average Linear Groundwater Velocity', validators=[InputRequired("Please enter a valid value")])
+    Longitudinal_Dispersivity = FloatField('Longitudinal Dispersivity', validators=[DataRequired()])
+    Horizontal_Transverse_Dispersivity = FloatField('Horizontal Transverse Dispersivity', validators=[DataRequired()])
+    Vertical_Transverse_Dispersivity = FloatField('Vertical Transverse Dispersivity', validators=[DataRequired()])
+    Effective_Diffusion_Coefficient = FloatField('Effective Diffusion Coefficient', validators=[DataRequired()])
+    R = FloatField('R', validators=[DataRequired()])
+    Ga = FloatField('Ga', validators=[DataRequired()])
+    La = FloatField('La', validators=[DataRequired()])
+    M = FloatField('M', validators=[DataRequired()])
+    submit = SubmitField('Generate Graph')
 
 class HamForm(FlaskForm):
     Width = FloatField('Width', validators=[DataRequired()])
