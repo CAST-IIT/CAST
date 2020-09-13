@@ -36,24 +36,6 @@ class Parameters:
         'Biological Factor',
         'Model Plume Length'
     ]
-    Bio_data_columns = [
-        'ID',
-        'Threshold Concentration',
-        'Time',
-        'Top Source Location',
-        'Input Concentration',
-        'Source Width',
-        'Average Linear Groundwater Velocity',
-        'Longitudinal Dispersivity',
-        'Horizontal Transverse Dispersivity',
-        'Vertical Transverse Dispersivity',
-        'Effective Diffusion Coefficient',
-        'R',
-        'Ga',
-        'La',
-        'M',
-        'Model Plume Length'
-    ]
     Ham_data_columns = [
         'ID',
         'Width',
