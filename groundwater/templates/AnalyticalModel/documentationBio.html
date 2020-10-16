@@ -1,5 +1,5 @@
 {% extends 'baseLayoutDocumentation.html' %}
-{% block title %}Chu et al. (2004){% endblock %}
+{% block title %}BioScreen{% endblock %}
 {% block li %}
         <div class="dropdownNew">
             <button class="dropbtnNew">BioScreen
@@ -7,30 +7,35 @@
             </button>
             <div class="dropdown-contentNew">
                 <a href="{{ url_for('BioSingle')}}">Single Computing Simulation</a>
-                <a href="{{ url_for('chuEtAlModelMultiple')}}">Multiple Computing Simulation</a>
+                <a href="{{ url_for('BioMultiple')}}">Multiple Computing Simulation</a>
             </div>
         </div>
 {% endblock %}
 {% block content %}
-<h1 id="2.-Horizontal-oriented-2D-Model--–-BioScreen"><strong>Horizontal oriented <u>2D</u> Model</strong>  – BioScreen<a class="anchor-link" href="#2.-Horizontal-oriented-2D-Model--%E2%80%93-Chu-et-al.-(2004)">¶</a></h1><p>This model, based on Chu et al. (2004), provides an estimate of a steady-state plume length ($L_{max}$ ) and investigate the large-time solution behavior of a representative bioreactive transport model under the conditions that the mixing of two required substrate occurs only in the directions transverse to groundwater flow.</p>
-<p><img src="static/chu_fig.jpeg" alt="Output from Chu et al.(2004) model" style="zoom:70%;"></p>
-    <p>Chu et al.(2004) provides the following explicit expression for $L_{max}$:</p>
-<p>$$
-L_{max} = \frac{\pi}{16}\frac{W^2}{\alpha_{TH}}{\bigg(\frac{\gamma C_{ED}^\circ  }{  C_{EA}^\circ - \epsilon }\bigg)^2}
-$$</p>
-<p>in which:</p>
-<p>$W$ = Width of contaminated source [L]<br>
-$\alpha_{TH}$ = Horizontal Transverse Dispersivity [L]<br>
-$\gamma$ = Reaction stoichiometric ratio [ ]<br>
-$C_{ED}^\circ$ = Contaminant (Electron Donor) concentration [ML$^{-1}$]<br>
-$C_{EA}^\circ$ = Partner Reactant (Electron Acceptor) concentration [ML$^{-1}$]<br>
-$\epsilon$ = Biological concentration factor [ML$^{-1}$].</p>
+<h1 id="2.-Horizontal-oriented-2D-Model--–-BioScreen"><strong>BIOSCREEN – Newell et al. (1997)</strong><a class="anchor-link" href="#2.-Horizontal-oriented-2D-Model--%E2%80%93-Chu-et-al.-(2004)">¶</a></h1><p>The model provides a three-dimensional solution for transport of dissolved contaminants, incorporating natural attenuation processes. As shown in Figure 1, the source is given as a patch specified-concentration boundary condition.</p>
+<p><img src="static/bio_main.png" alt="" style="zoom:70%;"></p>
+<p><i>Figure 1: Conceptual Model</i></p>
+    <p>Newell et al. (1997)/ Karanovic et al. (2007) Provide the following expression for an exact analytical solution:</p>
+<p><img src="static/bio.png" alt="" style="zoom:70%;"></p>
+<p>with:</p>
+<p>$c_{o}$ = initial source concentration<br>
+$D_{x}^{'}$ = dispersion coefficient divided by retardation factor Dx/R<br>
+$D_{y}^{'}$ = dispersion coefficient divided by retardation factor Dy/R<br>
+$D_{z}^{'}$ = dispersion coefficient divided by retardation factor Dz/R<br>
+$\gamma$ = source decay coefficient<br>
+$\lambda_{eff}$ = effective first order decay coefficient</p>
+$W$ = source width</p>
+$H$ = source depth</p>
 <p><strong>The model is based on the following assumptions:</strong></p>
 <ol>
-<li>There is a continuous line source of contamination and instantaneous reaction model.</li>
-<li>A dissolved contaminant is assumed to be biodegraded only at its plume fringe because of transverse
-mixing but not inside the plume.</li>
+<li>Aquifer extends semi-infinite in x-direction, infinite in y-direction and extends from water table to relatively large depth.</li>
+<li>Groundwater flow is steady and one dimensional.</li>
+<li>The solute undergoes equilibrium sorption and first-order transformation reactions.</li>
+<li>The aquifer is homogeneous and Lmax is always found on the center line.</li>
 </ol>
+<p>The CAST Project acquires the maximum plume length Lmax from this model, using Gauss-Legendre-Quadrature to obtain a solution. Figure 2 shows the concentration of the contaminant along x-direction.</p>
+<p><img src="static/bio_graphpng.png" alt="" style="zoom:70%;"></p>
+<p><i>Figure 2: Concentration along center line</i></p>
 <p><strong>Reference:</strong></p>
-<p>M. Chu  P. K. Kitanidis  P. L. McCarty. Modeling microbial reactions at the plume fringe subject to transverse mixing in porous media: When can the rates of microbial reaction be assumed to be instantaneous? <a href="https://doi.org/10.1029/2004WR003495">https://doi.org/10.1029/2004WR003495</a></p>
+<p>Marinko Karanovic, Christopher J. Neville, and Charles B. Andrews. BIOSCREEN-AT: BIOSCREEN with an Exact Analytical Solution. Vol. 45, No. 2 GROUND WATER March–April 2007 (pages 242–245).</p>
 {% endblock %}

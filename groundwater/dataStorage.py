@@ -59,12 +59,12 @@ def data_chu(user_id):
     return table_data
 
 def data_Bio(user_id):
-    chu = Bio.query.filter_by(user_id=user_id).all()
+    bio = Bio.query.filter_by(user_id=user_id).all()
     table_data = []
-    for data in Bio:
+    for data in bio:
         table_data.append([
             data.id,
-            data.Threshold_Contaminant_Concentration,
+            data.Threshold_Concentration,
             data.Time,
             data.Top_Source_Location,
             data.Input_Concentration,

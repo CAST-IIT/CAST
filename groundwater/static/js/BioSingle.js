@@ -12,9 +12,9 @@ function plotScatterData(top, concentration, longitudinal, width, la) {
                 Vertical : $('#Vertical').val(),
                 Diffusion : $('#Diffusion').val(),
                 R : $('#R').val(),
-                ga : $('#ga').val(),
-                la : la,
-                gauss : $('#gauss').val(),
+                Ga : $('#Ga').val(),
+                La : la,
+                M : $('#M').val(),
 				Result : $('#Thickness').val()
 			},
             url: '/BioSinglePlot',
@@ -43,7 +43,7 @@ $('form').on("submit",function(event){
    $('#sliderLongitudinal').css('display', '');
    $('#sliderWidth').css('display', '');
    $('#sliderLa').css('display', '');
-   plotScatterData($('#Top_Of_Source').val(), $('#Input_Concentration').val(), $('#Width').val(),$('#Longitudinal').val(),$('#la').val());
+   plotScatterData($('#Top_Of_Source').val(), $('#Input_Concentration').val(), $('#Width').val(),$('#Longitudinal').val(),$('#La').val());
 });
 
 $('#sliderTop').on('change', () => fetchValuesAndPlotData())

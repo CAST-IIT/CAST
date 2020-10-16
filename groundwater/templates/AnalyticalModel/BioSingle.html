@@ -16,12 +16,12 @@
         <div class="row">
             <div class="col-lg-5 col-sm-5 col-xs-5">
                 <h2>BioScreen</h2>
-                <img src="static/chu2004.png">
+                <img src="static/bio.png">
                 <br>
                 <form class="form-inline" action="/BioSinglePlot" method="POST">
                     <div class="form-group">
                         1.Threshold Concentration (Cthres) :<label class="sr-only">Threshold Concentration</label>
-                        <input type="number" class="form-control" id="Threshold_Concentration" name="Threshold_Concentration" placeholder="Chres" required min=0  step="any" value="8.59">
+                        <input type="number" class="form-control" id="Threshold_Concentration" name="Threshold_Concentration" placeholder="Chres" required min=0  step="any" value="5e-5">
                     </div>
                     <br><br>
                     <div class="form-group">
@@ -61,7 +61,7 @@
                     <br><br>
                     <div class="form-group">
                         9.Vertical Transverse Dispersivity (al_z) : <label class="sr-only">Vertical Dispersivity</label>
-                        <input type="number" class="form-control" name="Vertical" id="Vertical" placeholder="al_z" required min=0 max="0.01" max="1" step="any" value="0.05">
+                        <input type="number" class="form-control" name="Vertical" id="Vertical" placeholder="al_z" required min=0.01 max="1" step="any" value="0.05">
                     </div>
                     <br><br>
                     <div class="form-group">
@@ -75,18 +75,18 @@
                     </div>
                     <br><br>
                      <div class="form-group">
-                        12.ga : <label class="sr-only">ga</label>
-                        <input type="number" class="form-control" name="ga" id="ga" placeholder="ga" required min=0 max="1" step="any" value="0">
+                        12.Ga : <label class="sr-only">Ga</label>
+                        <input type="number" class="form-control" name="Ga" id="Ga" placeholder="Ga" required min=0 max="1" step="any" value="0">
                     </div>
                     <br><br>
                     <div class="form-group">
-                        13.la : <label class="sr-only">la</label>
-                        <input type="number" class="form-control" name="la" id="la" placeholder="la" required min=0 max="1" step="any" value="1.386e-1">
+                        13.La : <label class="sr-only">La</label>
+                        <input type="number" class="form-control" name="La" id="La" placeholder="La" required min=0 max="1" step="any" value="1.386e-1">
                     </div>
                     <br><br>
                      <div class="form-group">
                         14.Number of Gauss points : <label class="sr-only">Gauss Points</label>
-                        <input type="number" class="form-control" name="gauss" id="gauss" placeholder="m" required min=0 step="any" value="256">
+                        <input type="number" class="form-control" name="M" id="M" placeholder="M" required min=0 step="any" value="256">
                     </div>
                     <br><br>
                 <br>
@@ -99,27 +99,27 @@
                 <div class="grid-container">
                     <div id="sliderTop" class="slidecontainer" style="display: none">
                     <label> Top of Source located at </label>
-                    <input type="range" min="0.1" max="6" value="3.1" class="slider" id='scatterplot_fits'>
-                    <p>Value: <span id="topVal"></span></p>
+                    <input type="range" min="0" max="50" value="4" step="any" class="slider" id='scatterplot_fits'>
+                    <p>Value: <span id="thicknessVal"></span></p>
                     </div>
                     <div id="sliderConcentration" class="slidecontainer" style="display: none">
                     <label> Concentration </label>
-                    <input type="range" min="0.0001" max="0.01" value="0.005" step="0.0001" class="slider" id='parameters'>
-                    <p>Value: <span id="concentrationVal"></span></p>
+                    <input type="range" min="0" max="1000" value="1" step="any" class="slider" id='parameters'>
+                    <p>Value: <span id="dispersivityVal"></span></p>
                     </div>
                     <div id="sliderLongitudinal" class="slidecontainer" style="display: none">
                     <label> Longitudinal Dispersivity </label>
-                    <input type="range" min="0.0001" max="0.01" value="0.005" step="0.0001" class="slider" id='parameters2'>
+                    <input type="range" min="1" max="100" value="10" step="any" class="slider" id='parameters2'>
                     <p>Value: <span id=longitudinalVal"></span></p>
                     </div>
                     <div id="sliderWidth" class="slidecontainer" style="display: none">
                     <label> Width </label>
-                    <input type="range" min="0.0001" max="0.01" value="0.005" step="0.0001" class="slider" id='parameters3'>
+                    <input type="range" min="0" max="1000" value="20" step="any" class="slider" id='parameters3'>
                     <p>Value: <span id="widthVal"></span></p>
                     </div>
                     <div id="sliderLa" class="slidecontainer" style="display: none">
                     <label> La </label>
-                    <input type="range" min="0.0001" max="0.01" value="0.005" step="0.0001" class="slider" id='parameters4'>
+                    <input type="range" min="0" max="1" value="0.1" step="any" class="slider" id='parameters4'>
                     <p>Value: <span id="laVal"></span></p>
                     </div>
                 </div>
@@ -138,4 +138,30 @@
         </div>
     </div>
 <script src="{{ url_for('static', filename='js/BioSingle.js') }}"></script>
+{% endblock %}
+
+{% block script %}
+var longitudinalSlider = document.getElementById("parameters2");
+var widthSlider = document.getElementById("parameters3");
+var laSlider = document.getElementById("parameters4");
+
+var longitudinalOutput = document.getElementById("longitudinalVal");
+var widthOutput = document.getElementById("widthVal");
+var laOutput = document.getElementById("laVal");
+
+longitudinalOutput.innerHTML = longitudinalSlider.value;
+widthOutput.innerHTML = widthSlider.value;
+laOutput.innerHTML = laSlider.value;
+
+widthSlider.oninput = function() {
+  widthOutput.innerHTML = this.value;
+}
+
+longitudinalSlider.oninput = function() {
+  longitudinalOutput.innerHTML = this.value;
+}
+
+laSlider.oninput = function() {
+  laOutput.innerHTML = this.value;
+}
 {% endblock %}

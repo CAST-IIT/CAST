@@ -215,11 +215,12 @@ def check_file_for_bio_equation(plume, current_user, Bio, db):
                 Source_Width=w[i], Average_Linear_Groundwater_Velocity=v[i], Longitudinal_Dispersivity=al_x[i],
                 Horizontal_Transverse_Dispersivity=al_y[i], Vertical_Transverse_Dispersivity=al_z[i],
                 Effective_Diffusion_Coefficient=df[i], R=r[i], Ga=ga[i], La=la[i], M=m[i], Model_Plume_Length=lMax,
-                chu=current_user
+                user_id=1
             )
             db.session.add(bio)
         db.session.commit()
     except Exception as e:
+        print(e)
         return False
     return True
 
@@ -272,6 +273,7 @@ def check_file_for_liedl3d_equation(plume, current_user, Liedl3D, db):
             db.session.add(liedl3d)
         db.session.commit()
     except Exception as e:
+        print(e)
         return False
     return True
 

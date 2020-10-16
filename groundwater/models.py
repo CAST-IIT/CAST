@@ -118,8 +118,9 @@ class Bio(db.Model):
                f'{self.Top_Source_Location},{self.Input_Concentration},{self.Source_Width}' \
                f'{self.Average_Linear_Groundwater_Velocity},{self.Longitudinal_Dispersivity},' \
                f'{self.Horizontal_Transverse_Dispersivity},{self.Vertical_Transverse_Dispersivity}' \
-               f'{self.Effective_Diffusion_Coefficient},{self.R},{self.Ga},{self.La}' \
+               f'{self.Effective_Diffusion_Coefficient},{self.R},{self.Ga},{self.La},{self.M})' \
                f'{self.Model_Plume_Length},{self.user_id})'
+
 
 
 class Ham(db.Model):

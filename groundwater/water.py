@@ -498,76 +498,76 @@ def documentationBio():
 @app.route('/BioSingle', methods=['POST', 'GET'])
 def BioSingle():
 
-   Cthres = 5e-5  # threshhold concentration [mg/l]       Input Box (lower limit: >0, upper limit: <Co)
-   # time
-   t = 20  # [y]          Input Box (Default = 20, if below 15, use: (1/la)+5,  upper limit 1000)
-   # Geometry - centreline
-   y = 0  # [m]          fixed (no Input)
-   z_1 = 0  # [m]  BOTTOM OF SOURCE LOCATED AT        fixed (no input)
-   z_2 = 4  # [m]   TOP OF SOURCE LOCATED AT        Input slider (lower limit: >0, upper limit:50)
-   # Source term
-   Co = 1  # [mg/l]  INPUT CONCENTRATION      Input slider (lower limit: >0, upper limit:1000)
-   z = (z_1 + z_2) / 2  # [m]          fixed (no Input)
-   W = 20  # [m]  source width        Input slider (lower limit: >0, upper limit:1000)
-   # hydraulic & mixing
-   v = 10  # [m/y]  AVERAGE LINEAR GROUNDWATER VELOCITY       Input Box (lower limit: 10, upper limit: 1000 -> for very high values we have to suggest: m=20)
-   al_x = 10  # [m]  LONGITUDINAL DISPERSIVITY        Input slider (lower limit: 1, upper limit: 100, default: 10)
-   al_y = 0.5  # [m]  HORIZONTAL TRANSVERSE DISPERSIVITY        Input Box (lower limit: 0.1, upper limit: 10, default: 0.5)
-   al_z = 0.05  # [m]  VERTICAL TRANSVERSE DISPERSIVITY        Input Box (lower limit: 0.01, upper limit: 1, default: 0.05)
-   Df = 0  # [m^2/y]   EFFECTIVE DIFFUSION COEFFICIENT    Input Box (lower limit: 0 upper limit: 0.1, default: 0)
-   # reaction terms
-   R = 1  # [-]          Input Box (lower limit: >0, upper limit:, default: 1)
-   ga = 0  # [1/y]        Input Box (lower limit: 0, upper limit: 1, default: 0)
-   la = 1.386e-1  # [1/y]        Input slider (lower limit: 0, upper limit: 1, default: 0.1)
-   # Gauss points: max 256
-   m = 256  # [-]    NUMBER OF GAUSS POINTS      Input Box (possible values: 4,5,6,10,15,20,60,104,256; default: 60)
-   Dx = al_x * v + Df  # [m^2/y]
-   Dy = al_y * v + Df  # [m^2/y]
-   Dz = Dy / 10 + Df  # [m^2/y]
-   # used data
-   vr = v / R  # [m/y]
-   Dyr = Dy / R  # [m^2/y]
-   Dxr = Dx / R  # [m^2/y]
-   Dyr = Dy / R  # [m^2/y]
-   Dzr = Dz / R  # [m^2/y]
+    Cthres = 5e-5  # threshhold concentration [mg/l]       Input Box (lower limit: >0, upper limit: <Co)
+    # time
+    t = 20  # [y]          Input Box (Default = 20, if below 15, use: (1/la)+5,  upper limit 1000)
+    # Geometry - centreline
+    y = 0  # [m]          fixed (no Input)
+    z_1 = 0  # [m]  BOTTOM OF SOURCE LOCATED AT        fixed (no input)
+    z_2 = 4  # [m]   TOP OF SOURCE LOCATED AT        Input slider (lower limit: >0, upper limit:50)
+    # Source term
+    Co = 1  # [mg/l]  INPUT CONCENTRATION      Input slider (lower limit: >0, upper limit:1000)
+    z = (z_1 + z_2) / 2  # [m]          fixed (no Input)
+    W = 20  # [m]  source width        Input slider (lower limit: >0, upper limit:1000)
+    # hydraulic & mixing
+    v = 10  # [m/y]  AVERAGE LINEAR GROUNDWATER VELOCITY       Input Box (lower limit: 10, upper limit: 1000 -> for very high values we have to suggest: m=20)
+    al_x = 10  # [m]  LONGITUDINAL DISPERSIVITY        Input slider (lower limit: 1, upper limit: 100, default: 10)
+    al_y = 0.5  # [m]  HORIZONTAL TRANSVERSE DISPERSIVITY        Input Box (lower limit: 0.1, upper limit: 10, default: 0.5)
+    al_z = 0.05  # [m]  VERTICAL TRANSVERSE DISPERSIVITY        Input Box (lower limit: 0.01, upper limit: 1, default: 0.05)
+    Df = 0  # [m^2/y]   EFFECTIVE DIFFUSION COEFFICIENT    Input Box (lower limit: 0 upper limit: 0.1, default: 0)
+    # reaction terms
+    R = 1  # [-]          Input Box (lower limit: >0, upper limit:, default: 1)
+    ga = 0  # [1/y]        Input Box (lower limit: 0, upper limit: 1, default: 0)
+    la = 1.386e-1  # [1/y]        Input slider (lower limit: 0, upper limit: 1, default: 0.1)
+    # Gauss points: max 256
+    m = 256  # [-]    NUMBER OF GAUSS POINTS      Input Box (possible values: 4,5,6,10,15,20,60,104,256; default: 60)
+    Dx = al_x * v + Df  # [m^2/y]
+    Dy = al_y * v + Df  # [m^2/y]
+    Dz = Dy / 10 + Df  # [m^2/y]
+    # used data
+    vr = v / R  # [m/y]
+    Dyr = Dy / R  # [m^2/y]
+    Dxr = Dx / R  # [m^2/y]
+    Dyr = Dy / R  # [m^2/y]
+    Dzr = Dz / R  # [m^2/y]
 
-   def C(x):
-       # Boundary Condition
-       if x <= 1e-6:
-           if y <= W / 2 and y >= -W / 2 and z <= z_2 and z >= z_1:
-               C = Co * np.exp(-ga * t)
-           else:
-               C = 0
-       else:
-           a = Co * np.exp(-ga * t) * x / (8 * np.sqrt(np.pi * Dxr))
-           roots = sp.special.roots_legendre(m)[0]
-           weights = sp.special.roots_legendre(m)[1]
-           # scaling
-           bot = 0
-           top = np.sqrt(np.sqrt(t))
-           Tau = (roots * (top - bot) + top + bot) / 2
-           Tau4 = Tau ** 4
-           # calculation
-           xTerm = (np.exp(-(((la - ga) * Tau4) + ((x - vr * Tau4) ** 2) / (4 * Dxr * Tau4)))) / (Tau ** 3)
-           yTerm = sp.special.erfc((y - W / 2) / (2 * np.sqrt(Dyr * Tau4))) - sp.special.erfc((y + W / 2) / (2 * np.sqrt(Dyr * Tau4)))
-           zTerm = sp.special.erfc((z - z_2) / (2 * np.sqrt(Dzr * Tau4))) - sp.special.erfc((z - z_1) / (2 * np.sqrt(Dzr * Tau4)))
-           Term = xTerm * yTerm * zTerm
-           Integrand = Term * (weights * (top - bot) / 2)
-           C = a * 4 * sum(Integrand)
-       return C
+    def C(x):
+        # Boundary Condition
+        if x <= 1e-6:
+            if y <= W / 2 and y >= -W / 2 and z <= z_2 and z >= z_1:
+                C = Co * np.exp(-ga * t)
+            else:
+                C = 0
+        else:
+            a = Co * np.exp(-ga * t) * x / (8 * np.sqrt(np.pi * Dxr))
+            roots = sp.special.roots_legendre(m)[0]
+            weights = sp.special.roots_legendre(m)[1]
+            # scaling
+            bot = 0
+            top = np.sqrt(np.sqrt(t))
+            Tau = (roots * (top - bot) + top + bot) / 2
+            Tau4 = Tau ** 4
+            # calculation
+            xTerm = (np.exp(-(((la - ga) * Tau4) + ((x - vr * Tau4) ** 2) / (4 * Dxr * Tau4)))) / (Tau ** 3)
+            yTerm = sp.special.erfc((y - W / 2) / (2 * np.sqrt(Dyr * Tau4))) - sp.special.erfc((y + W / 2) / (2 * np.sqrt(Dyr * Tau4)))
+            zTerm = sp.special.erfc((z - z_2) / (2 * np.sqrt(Dzr * Tau4))) - sp.special.erfc((z - z_1) / (2 * np.sqrt(Dzr * Tau4)))
+            Term = xTerm * yTerm * zTerm
+            Integrand = Term * (weights * (top - bot) / 2)
+            C = a * 4 * sum(Integrand)
+        return C
 
-   x_array = np.array([0])
-   c_array = np.array([C(0)])
-   x = 0
-   while C(x) >= Cthres:
-       x = x + 1
-       x_array = np.append(x_array, x)
-       c_array = np.append(c_array, C(x))
-   else:
-       lMax = "%.2f" % x
+    x_array = np.array([0])
+    c_array = np.array([C(0)])
+    x = 0
+    while C(x) >= Cthres:
+        x = x + 1
+        x_array = np.append(x_array, x)
+        c_array = np.append(c_array, C(x))
+    else:
+        lMax = "%.2f" % x
 
-   year_histogram = create_singlePlot(lMax)
-   return render_template('AnalyticalModel/BioSingle.html', year_histogram=year_histogram)
+    year_histogram = create_singlePlot(lMax)
+    return render_template('AnalyticalModel/BioSingle.html', year_histogram=year_histogram)
 
 
 @app.route('/BioSinglePlot', methods=['POST'])
@@ -583,9 +583,9 @@ def BioSinglePlot():
     al_z = float(request.form['Vertical'])
     Df = float(request.form['Diffusion'])
     R = float(request.form['R'])
-    ga = float(request.form['ga'])
-    la = float(request.form['la'])
-    m = float(request.form['gauss'])
+    ga = float(request.form['Ga'])
+    la = float(request.form['La'])
+    m = float(request.form['M'])
     y=0
     z_1=0
     z = (z_1 + z_2) / 2
@@ -716,11 +716,12 @@ def BioMultiple():
         bio = Bio(Threshold_Concentration=Cthres, Time=t, Top_Source_Location=z_2,
                   Input_Concentration=Co, Source_Width=W, Average_Linear_Groundwater_Velocity=v,
                   Longitudinal_Dispersivity=al_x, Horizontal_Transverse_Dispersivity=al_y,
-                  Vertical_Transverse_Dispersivity=al_z,Effective_Diffusion_Coefficient=Df, R=R, Ga=ga, La=la, M=m,
+                  Vertical_Transverse_Dispersivity=al_z, Effective_Diffusion_Coefficient=Df, R=R, Ga=ga, La=la, M=m,
                   Model_Plume_Length=lMax, bio=current_user)
+
         db.session.add(bio)
         db.session.commit()
-        # flash('Your entry has been added!', 'success')
+        #flash('Your entry has been added!', 'success')
         return redirect(url_for('BioMultiple'))
     elif request.method == "GET":
         try:
@@ -746,13 +747,8 @@ def BioMultiple():
     para = create_BioPlotMultiple(df['Site No.'].tolist(), table_data)
     y = df['Site No.']
     x = df['Site Unit']
-    return render_template('AnalyticalModel/BioMultiple.html'
-
-
-
-
-                           , plot=para, siteData=zip(y, x),
-                           form=form, table_data=table_data, column_names=Parameters.Bio_data_columns)
+    return render_template('AnalyticalModel/BioMultiple.html', plot=para, siteData=zip(y, x),form=form,
+                           table_data=table_data, column_names=Parameters.Bio_data_columns)
 
 @app.route('/documentationHam', methods=['GET', 'POST'])
 def documentationHam():

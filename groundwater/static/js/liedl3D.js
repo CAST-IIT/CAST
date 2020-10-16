@@ -14,6 +14,7 @@ function plotScatterData(thickness, dispersivity, VDispersivity, Width) {
             url: '/liedl3DSinglePlot',
             type: "POST",
         success: function(resp,data){
+            console.log(resp.Result);
             $('#successAlert').text("Maximum Plume Length(LMax): "+resp.Result).show();
             $('div#response').html(resp.data);
         }
