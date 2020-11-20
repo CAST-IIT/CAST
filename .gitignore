@@ -1,0 +1,5 @@
+# VS code checkpoints and cache
+.vscode
+__pycache__
+groundwater/__pycache__
+groundwater/NumericalModel/__pycache__
