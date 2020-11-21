@@ -22,6 +22,7 @@ class User(db.Model, UserMixin):
     liedl3d = db.relationship('Liedl3D', backref='liedl3d', lazy=True)
     birla = db.relationship('Birla', backref='birla', lazy=True)
     maiergrathwohl = db.relationship('MaierGrathwohl', backref='maiergrathwohl', lazy=True)
+    bio = db.relationship('Bio', backref='bio', lazy=True)
 
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(app.config['SECRET_KEY'], expires_sec)

@@ -220,7 +220,7 @@ def create_BioPlotMultiple(siteList, table_data):
     return graphJSON
 
 def create_HamPlotMultiple(siteList,table_data):
-    modelPlumeLength = [item[5] for item in table_data]
+    modelPlumeLength = [item[6] for item in table_data]
     user_site_no = generate_site_numbers(len(modelPlumeLength))
     trace1 = go.Scatter(
         x=user_site_no,

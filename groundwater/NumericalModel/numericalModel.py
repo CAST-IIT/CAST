@@ -38,8 +38,9 @@ def numerical_model(Lx, Ly, ncol, nrow, prsity, al, av, Gamma, Cd, Ca, h1, h2, h
     hk = hk
     perlen = 6000
     # Exe
-    exe_name_mf = copy('/home/vedaanti/Water/mf2005', path)
-    exe_name_mt = copy('/home/vedaanti/Water/mt3dms', path)
+    # Replace this path with your path
+    exe_name_mf = copy('C:\\Users\\Vedaanti Baliga\\Desktop\\Personal-code\\CAST\\mf2005.exe', path)
+    exe_name_mt = copy('C:\\Users\\Vedaanti Baliga\\Desktop\\Personal-code\\CAST\\mt3dms.exe', path)
 
     # Flow Calculation
     t0_mf = 'T02_mf' + id
@@ -98,7 +99,7 @@ def numerical_model(Lx, Ly, ncol, nrow, prsity, al, av, Gamma, Cd, Ca, h1, h2, h
     conc = conc[0, 0, :]
     cs = mm.contour_array(conc, levels=[C0], colors=['k'])
     mm.plot_ibound()
-    plt.clabel(cs)
+    # plt.clabel(cs)
     plt.xlabel('Distance Lx [m]')
     plt.ylabel('Aquifer Thickness [m]')
     plt.title('Contaminant Plume')

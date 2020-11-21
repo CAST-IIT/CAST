@@ -7,6 +7,7 @@ import scipy as sp
 from flask import flash, redirect, request
 from werkzeug.utils import secure_filename
 from groundwater.liedl3D import create_liedl3DPlot
+from groundwater.bioScreenFormula import bio
 
 from groundwater.parameters import Parameters
 
@@ -28,12 +29,12 @@ def allowed_file(check_file, current_user, current_table, db):
         check = check_file(plume, current_user, current_table, db)
         if check:
             flash(f'Successfully uploaded the file {filename}', category='success')
-        # else:
-        #     flash(f'Problem parsing the parameters.\n'
-        #           f'Please check that parameter heading and values for parameters are matching'
-        #           f' the permitted codes.\n'
-        #           f'Kindly refer to the sample csv file for details.',
-        #           category='danger')
+        else:
+            flash(f'Problem parsing the parameters.\n'
+                  f'Please check that the heading and ranges/values for the parameters are matching'
+                  f' the permitted codes.\n'
+                  f'Kindly refer to the sample csv file for details.',
+                  category='danger')
     else:
         flash('Incorrect file type!', category='danger')
         return redirect(request.url)
@@ -112,6 +113,7 @@ def check_file_for_liedl_equation(plume, current_user, Liedl, db):
             db.session.add(liedl)
         db.session.commit()
     except Exception as e:
+        print(e)
         return False
     return True
 
@@ -136,88 +138,37 @@ def check_file_for_chu_equation(plume, current_user, Chu, db):
             db.session.add(chu)
         db.session.commit()
     except Exception as e:
+        print(e)
         return False
     return True
 
 
 def check_file_for_bio_equation(plume, current_user, Bio, db):
     try:
-        cthres = convert_and_clean_inputs(plume, 'Threshold Concentration')
-        t = convert_and_clean_inputs(plume, 'Time')
-        z_2 = convert_and_clean_inputs(plume, 'Top Source Location')
-        co = convert_and_clean_inputs(plume, 'Input Concentration')
-        w = convert_and_clean_inputs(plume, 'Source Width')
+        Cthres = convert_and_clean_inputs(plume, 'Threshold Concentration')
+        time = convert_and_clean_inputs(plume, 'Time')
+        H = convert_and_clean_inputs(plume, 'Source Thickness')
+        c0 = convert_and_clean_inputs(plume, 'Source Concentration')
+        W = convert_and_clean_inputs(plume, 'Source Width')
         v = convert_and_clean_inputs(plume, 'Average Linear Groundwater Velocity')
-        al_x = convert_and_clean_inputs(plume, 'Longitudinal Dispersivity')
-        al_y = convert_and_clean_inputs(plume, 'Horizontal Transverse Dispersivity')
-        al_z = convert_and_clean_inputs(plume, 'Vertical Transverse Dispersivity')
-        df = convert_and_clean_inputs(plume, 'Effective Diffusion Coefficient')
-        r = convert_and_clean_inputs(plume, 'R')
-        ga = convert_and_clean_inputs(plume, 'Ga')
-        la = convert_and_clean_inputs(plume, 'La')
-        m = convert_and_clean_inputs(plume, 'M')
-
-        plume_length = len(w)
+        ax = convert_and_clean_inputs(plume, 'Longitudinal Dispersivity')
+        ay = convert_and_clean_inputs(plume, 'Horizontal Transverse Dispersivity')
+        az = convert_and_clean_inputs(plume, 'Vertical Transverse Dispersivity')
+        Df = convert_and_clean_inputs(plume, 'Effective Diffusion Coefficient')
+        R = convert_and_clean_inputs(plume, 'Retardation Factor')
+        gamma = convert_and_clean_inputs(plume, 'Source Decay Coefficient')
+        lambda_eff = convert_and_clean_inputs(plume, 'Effective first-order Decay Coefficient')
+        numberOfGaussPoints = convert_and_clean_inputs(plume, 'Number of Gauss points')
+        plume_length = len(W)
         for i in range(plume_length):
-            y = 0
-            z_1 = 0
-            z = (z_1 + z_2[i]) / 2
-            Dx = al_x[i] * v[i] + df[i]  # [m^2/y]
-            Dy = al_y[i] * v[i] + df[i]  # [m^2/y]
-            Dz = Dy / 10 + df[i]  # [m^2/y]
-
-            # used data
-            vr = v[i] / r[i]  # [m/y]
-            Dyr = Dy / r[i]  # [m^2/y]
-            Dxr = Dx / r[i]  # [m^2/y]
-            Dyr = Dy / r[i]  # [m^2/y]
-            Dzr = Dz / r[i]  # [m^2/y]
-
-            def C(x):
-                # Boundary Condition
-                if x <= 1e-6:
-                    if y <= w[i] / 2 and y >= -w[i] / 2 and z <= z_2[i] and z >= z_1:
-                        C = co[i] * np.exp(-ga[i] * t[i])
-                    else:
-                        C = 0
-                else:
-                    a = co[i] * np.exp(-ga[i] * t[i]) * x / (8 * np.sqrt(np.pi * Dxr))
-                    roots = sp.special.roots_legendre(m[i])[0]
-                    weights = sp.special.roots_legendre(m[i])[1]
-                    # scaling
-                    bot = 0
-                    top = np.sqrt(np.sqrt(t[i]))
-                    Tau = (roots * (top - bot) + top + bot) / 2
-                    Tau4 = Tau ** 4
-                    # calculation
-                    xTerm = (np.exp(-(((la[i] - ga[i]) * Tau4) + ((x - vr * Tau4) ** 2) / (4 * Dxr * Tau4)))) / (Tau ** 3)
-                    yTerm = sp.special.erfc((y - w[i] / 2) / (2 * np.sqrt(Dyr * Tau4))) - sp.special.erfc(
-                        (y + w[i] / 2) / (2 * np.sqrt(Dyr * Tau4)))
-                    zTerm = sp.special.erfc((z - z_2[i]) / (2 * np.sqrt(Dzr * Tau4))) - sp.special.erfc(
-                        (z - z_1) / (2 * np.sqrt(Dzr * Tau4)))
-                    Term = xTerm * yTerm * zTerm
-                    Integrand = Term * (weights * (top - bot) / 2)
-                    C = a * 4 * sum(Integrand)
-                return C
-
-            x_array = np.array([0])
-            c_array = np.array([C(0)])
-            x = 0
-            while C(x) >= cthres[i]:
-                x = x + 1
-                x_array = np.append(x_array, x)
-                c_array = np.append(c_array, C(x))
-            else:
-                lMax = "%.2f" % x
-
-            bio = Bio(
-                Threshold_Concentration=cthres[i], Time=t[i], Top_Source_Location=z_2[i], Input_Concentration=co[i],
-                Source_Width=w[i], Average_Linear_Groundwater_Velocity=v[i], Longitudinal_Dispersivity=al_x[i],
-                Horizontal_Transverse_Dispersivity=al_y[i], Vertical_Transverse_Dispersivity=al_z[i],
-                Effective_Diffusion_Coefficient=df[i], R=r[i], Ga=ga[i], La=la[i], M=m[i], Model_Plume_Length=lMax,
-                user_id=1
-            )
-            db.session.add(bio)
+            lMax = bio(Cthres[i],time[i],H[i],c0[i],W[i],v[i],ax[i],ay[i],az[i],Df[i],R[i],gamma[i],lambda_eff[i],
+            numberOfGaussPoints[i])
+            bio_screen = Bio(Threshold_Concentration=Cthres[i], Time=time[i], Top_Source_Location=H[i],
+                  Input_Concentration=c0[i], Source_Width=W[i], Average_Linear_Groundwater_Velocity=v[i],
+                  Longitudinal_Dispersivity=ax[i], Horizontal_Transverse_Dispersivity=ay[i],
+                  Vertical_Transverse_Dispersivity=az[i], Effective_Diffusion_Coefficient=Df[i], R=R[i], Ga=gamma[i], La=lambda_eff[i],
+                  M=numberOfGaussPoints[i],Model_Plume_Length=lMax, bio=current_user)
+            db.session.add(bio_screen)
         db.session.commit()
     except Exception as e:
         print(e)
@@ -245,6 +196,7 @@ def check_file_for_ham_equation(plume, current_user, Ham, db):
             db.session.add(ham)
         db.session.commit()
     except Exception as e:
+        print(e)
         return False
     return True
 
@@ -298,6 +250,7 @@ def check_file_for_maier_and_grathwohl_equation(plume, current_user, MaierGrathw
             db.session.add(maiergrathwohl)
         db.session.commit()
     except Exception as e:
+        print(e)
         return False
     return True
 
@@ -325,5 +278,6 @@ def check_file_for_birla_equation(plume, current_user, Birla, db):
             db.session.add(birla)
         db.session.commit()
     except Exception as e:
+        print(e)
         return False
     return True

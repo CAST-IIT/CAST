@@ -15,8 +15,10 @@ from flask_mail import Message
 
 from groundwater import app, db, bcrypt, mail
 from groundwater.NumericalModel.numericalModel import numerical_model
+from groundwater.bioScreenFormula import bio
 from groundwater.assignParameterValue import assign_parameter_value
-from groundwater.dataStorage import *
+from groundwater.dataStorage import user_database, data_liedl, data_chu, data_ham, data_Bio, data_birla, data_maiergrathwohl, \
+    data_liedl3d
 from groundwater.databasePlots import create_bargraph, create_histogram, create_boxplot
 from groundwater.dispersivity_graphs import dispersivity_graphs
 from groundwater.file_checkers import allowed_file, check_file_for_liedl_equation, check_file_for_chu_equation, \
@@ -25,8 +27,8 @@ from groundwater.file_checkers import allowed_file, check_file_for_liedl_equatio
 from groundwater.form import RegistrationForm, LoginForm, UpdateAccountForm, LiedlForm, ChuForm, HamForm, Liedl3DForm, \
     BirlaForm, MaierGrathwohlForm, UserDatabaseForm, NumericalForm, RequestResetForm, ResetPasswordForm, BioForm
 from groundwater.liedl3D import create_liedl3DPlot
-from groundwater.models import User, Liedl, Chu, Ham, Liedl3D, Birla, MaierGrathwohl, User_Database
-from groundwater.parameters import *
+from groundwater.models import User, Liedl, Chu, Ham, Liedl3D, Birla, MaierGrathwohl, User_Database, Bio
+from groundwater.parameters import Parameters
 from groundwater.scatterplot import create_scatterplot
 from groundwater.scatterplotAnalyticalModel import create_liedlPlotMultiple, create_chuEtAlPlotMultiple, \
     create_HamPlotMultiple, create_Liedl3DMultiple, create_BioPlotMultiple
@@ -208,6 +210,7 @@ def database():
                                        user_database=current_user, Compound=request.form["compound"])
             db.session.add(user_entry)
             db.session.commit()
+            flash('Your entry has been added!', 'success')
             return redirect('/database')
     elif "upload" in request.form:
         if request.method == 'POST':
@@ -379,6 +382,7 @@ def liedlModelMultiple():
                       Reactant_Concentration=cd, Model_Plume_Length=lMax, liedl=current_user)
         db.session.add(liedl)
         db.session.commit()
+        flash('Your entry has been added!', 'success')
         return redirect('/liedlModelMultiple')
 
     elif request.method == "GET":
@@ -403,6 +407,8 @@ def liedlModelMultiple():
             db.session.commit()
             flash(f'Successfully deleted all data', category='success')
         return redirect('/liedlModelMultiple')
+    elif not form.validate_on_submit():
+        flash('Something went wrong with entering your data, please check form - your entries have not been erased', category='danger')
     para = create_liedlPlotMultiple(df['Site No.'].tolist(), table_data)
     x = df['Site Unit']
     y = df['Site No.']
@@ -461,7 +467,7 @@ def chuEtAlModelMultiple():
                   chu=current_user)
         db.session.add(chu)
         db.session.commit()
-        # flash('Your entry has been added!', 'success')
+        flash('Your entry has been added!', 'success')
         return redirect(url_for('chuEtAlModelMultiple'))
     elif request.method == "GET":
         try:
@@ -484,6 +490,8 @@ def chuEtAlModelMultiple():
             db.session.commit()
             flash(f'Successfully deleted all data', category='success')
             return redirect(url_for('chuEtAlModelMultiple'))
+    elif not form.validate_on_submit():
+        flash('Something went wrong with entering your data, please check form - your entries have not been erased', category='danger')
     para = create_chuEtAlPlotMultiple(df['Site No.'].tolist(), table_data)
     y = df['Site No.']
     x = df['Site Unit']
@@ -497,75 +505,21 @@ def documentationBio():
 
 @app.route('/BioSingle', methods=['POST', 'GET'])
 def BioSingle():
-
-    Cthres = 5e-5  # threshhold concentration [mg/l]       Input Box (lower limit: >0, upper limit: <Co)
-    # time
-    t = 20  # [y]          Input Box (Default = 20, if below 15, use: (1/la)+5,  upper limit 1000)
-    # Geometry - centreline
-    y = 0  # [m]          fixed (no Input)
-    z_1 = 0  # [m]  BOTTOM OF SOURCE LOCATED AT        fixed (no input)
-    z_2 = 4  # [m]   TOP OF SOURCE LOCATED AT        Input slider (lower limit: >0, upper limit:50)
-    # Source term
-    Co = 1  # [mg/l]  INPUT CONCENTRATION      Input slider (lower limit: >0, upper limit:1000)
-    z = (z_1 + z_2) / 2  # [m]          fixed (no Input)
-    W = 20  # [m]  source width        Input slider (lower limit: >0, upper limit:1000)
-    # hydraulic & mixing
-    v = 10  # [m/y]  AVERAGE LINEAR GROUNDWATER VELOCITY       Input Box (lower limit: 10, upper limit: 1000 -> for very high values we have to suggest: m=20)
-    al_x = 10  # [m]  LONGITUDINAL DISPERSIVITY        Input slider (lower limit: 1, upper limit: 100, default: 10)
-    al_y = 0.5  # [m]  HORIZONTAL TRANSVERSE DISPERSIVITY        Input Box (lower limit: 0.1, upper limit: 10, default: 0.5)
-    al_z = 0.05  # [m]  VERTICAL TRANSVERSE DISPERSIVITY        Input Box (lower limit: 0.01, upper limit: 1, default: 0.05)
-    Df = 0  # [m^2/y]   EFFECTIVE DIFFUSION COEFFICIENT    Input Box (lower limit: 0 upper limit: 0.1, default: 0)
-    # reaction terms
-    R = 1  # [-]          Input Box (lower limit: >0, upper limit:, default: 1)
-    ga = 0  # [1/y]        Input Box (lower limit: 0, upper limit: 1, default: 0)
-    la = 1.386e-1  # [1/y]        Input slider (lower limit: 0, upper limit: 1, default: 0.1)
-    # Gauss points: max 256
-    m = 256  # [-]    NUMBER OF GAUSS POINTS      Input Box (possible values: 4,5,6,10,15,20,60,104,256; default: 60)
-    Dx = al_x * v + Df  # [m^2/y]
-    Dy = al_y * v + Df  # [m^2/y]
-    Dz = Dy / 10 + Df  # [m^2/y]
-    # used data
-    vr = v / R  # [m/y]
-    Dyr = Dy / R  # [m^2/y]
-    Dxr = Dx / R  # [m^2/y]
-    Dyr = Dy / R  # [m^2/y]
-    Dzr = Dz / R  # [m^2/y]
-
-    def C(x):
-        # Boundary Condition
-        if x <= 1e-6:
-            if y <= W / 2 and y >= -W / 2 and z <= z_2 and z >= z_1:
-                C = Co * np.exp(-ga * t)
-            else:
-                C = 0
-        else:
-            a = Co * np.exp(-ga * t) * x / (8 * np.sqrt(np.pi * Dxr))
-            roots = sp.special.roots_legendre(m)[0]
-            weights = sp.special.roots_legendre(m)[1]
-            # scaling
-            bot = 0
-            top = np.sqrt(np.sqrt(t))
-            Tau = (roots * (top - bot) + top + bot) / 2
-            Tau4 = Tau ** 4
-            # calculation
-            xTerm = (np.exp(-(((la - ga) * Tau4) + ((x - vr * Tau4) ** 2) / (4 * Dxr * Tau4)))) / (Tau ** 3)
-            yTerm = sp.special.erfc((y - W / 2) / (2 * np.sqrt(Dyr * Tau4))) - sp.special.erfc((y + W / 2) / (2 * np.sqrt(Dyr * Tau4)))
-            zTerm = sp.special.erfc((z - z_2) / (2 * np.sqrt(Dzr * Tau4))) - sp.special.erfc((z - z_1) / (2 * np.sqrt(Dzr * Tau4)))
-            Term = xTerm * yTerm * zTerm
-            Integrand = Term * (weights * (top - bot) / 2)
-            C = a * 4 * sum(Integrand)
-        return C
-
-    x_array = np.array([0])
-    c_array = np.array([C(0)])
-    x = 0
-    while C(x) >= Cthres:
-        x = x + 1
-        x_array = np.append(x_array, x)
-        c_array = np.append(c_array, C(x))
-    else:
-        lMax = "%.2f" % x
-
+    Cthres = 5e-5  
+    time = 20  
+    H = 6.1  
+    c0 = 106.35
+    W = 20  
+    v = 292  
+    ax  = 10.7   
+    ay = 1.1 
+    az = 0.11  
+    Df  = 0 
+    R = 1  
+    gamma = 0  
+    lambda_eff = 4.45e-1 
+    numberOfGaussPoints = 60 
+    lMax = bio(Cthres,time,H,c0,W,v,ax,ay,az,Df,R,gamma,lambda_eff,numberOfGaussPoints)
     year_histogram = create_singlePlot(lMax)
     return render_template('AnalyticalModel/BioSingle.html', year_histogram=year_histogram)
 
@@ -573,68 +527,20 @@ def BioSingle():
 @app.route('/BioSinglePlot', methods=['POST'])
 def BioSinglePlot():
     Cthres = float(request.form['Threshold_Concentration'])
-    t = float(request.form['Time'])
-    z_2 = float(request.form['Top_Of_Source'])
-    Co = float(request.form['Input_Concentration'])
+    time = float(request.form['Time'])
+    H = float(request.form['Top_Of_Source'])
+    c0 = float(request.form['Input_Concentration'])
     W = float(request.form['Width'])
     v = float(request.form['Velocity'])
-    al_x = float(request.form['Longitudinal'])
-    al_y = float(request.form['Horizontal'])
-    al_z = float(request.form['Vertical'])
+    ax = float(request.form['Longitudinal'])
+    ay = float(request.form['Horizontal'])
+    az = float(request.form['Vertical'])
     Df = float(request.form['Diffusion'])
     R = float(request.form['R'])
-    ga = float(request.form['Ga'])
-    la = float(request.form['La'])
-    m = float(request.form['M'])
-    y=0
-    z_1=0
-    z = (z_1 + z_2) / 2
-    Dx = al_x * v + Df  # [m^2/y]
-    Dy = al_y * v + Df  # [m^2/y]
-    Dz = Dy / 10 + Df  # [m^2/y]
-
-    # used data
-    vr = v / R  # [m/y]
-    Dyr = Dy / R  # [m^2/y]
-    Dxr = Dx / R  # [m^2/y]
-    Dyr = Dy / R  # [m^2/y]
-    Dzr = Dz / R  # [m^2/y]
-
-    def C(x):
-        # Boundary Condition
-        if x <= 1e-6:
-            if y <= W / 2 and y >= -W / 2 and z <= z_2 and z >= z_1:
-                C = Co * np.exp(-ga * t)
-            else:
-                C = 0
-        else:
-            a = Co * np.exp(-ga * t) * x / (8 * np.sqrt(np.pi * Dxr))
-            roots = sp.special.roots_legendre(m)[0]
-            weights = sp.special.roots_legendre(m)[1]
-            # scaling
-            bot = 0
-            top = np.sqrt(np.sqrt(t))
-            Tau = (roots * (top - bot) + top + bot) / 2
-            Tau4 = Tau ** 4
-            # calculation
-            xTerm = (np.exp(-(((la - ga) * Tau4) + ((x - vr * Tau4) ** 2) / (4 * Dxr * Tau4)))) / (Tau ** 3)
-            yTerm = sp.special.erfc((y - W / 2) / (2 * np.sqrt(Dyr * Tau4))) - sp.special.erfc((y + W / 2) / (2 * np.sqrt(Dyr * Tau4)))
-            zTerm = sp.special.erfc((z - z_2) / (2 * np.sqrt(Dzr * Tau4))) - sp.special.erfc((z - z_1) / (2 * np.sqrt(Dzr * Tau4)))
-            Term = xTerm * yTerm * zTerm
-            Integrand = Term * (weights * (top - bot) / 2)
-            C = a * 4 * sum(Integrand)
-        return C
-
-    x_array = np.array([0])
-    c_array = np.array([C(0)])
-    x = 0
-    while C(x) >= Cthres:
-        x = x + 1
-        x_array = np.append(x_array, x)
-        c_array = np.append(c_array, C(x))
-    else:
-        lMax = "%.2f" % x
-
+    gamma = float(request.form['Ga'])
+    lambda_eff = float(request.form['La'])
+    numberOfGaussPoints = float(request.form['M'])
+    lMax = bio(Cthres,time,H,c0,W,v,ax,ay,az,Df,R,gamma,lambda_eff,numberOfGaussPoints)
     year_histogram = create_singlePlot(lMax)
     return jsonify({'Result': lMax, 'data': render_template('graphSingleResult.html', year_histogram=year_histogram)})
 
@@ -645,83 +551,29 @@ def BioMultiple():
     table_data = data_Bio(current_user.id)
     if form.validate_on_submit():
         Cthres = form.Threshold_Concentration.data
-        t = form.Time.data
-        z_2 = form.Top_Source_Location.data
-        Co = form.Input_Concentration.data
+        time = form.Time.data
+        H = form.Top_Source_Location.data
+        c0 = form.Input_Concentration.data
         W = form.Source_Width.data
         v = form.Average_Linear_Groundwater_Velocity.data
-        al_x = form.Longitudinal_Dispersivity.data
-        al_y = form.Horizontal_Transverse_Dispersivity.data
-        al_z = form.Vertical_Transverse_Dispersivity.data
+        ax = form.Longitudinal_Dispersivity.data
+        ay = form.Horizontal_Transverse_Dispersivity.data
+        az = form.Vertical_Transverse_Dispersivity.data
         Df = form.Effective_Diffusion_Coefficient.data
         R = form.R.data
-        ga = form.Ga.data
-        la = form.La.data
-        m = form.M.data
-        y = 0
-        z_1 = 0
-        z = (z_1 + z_2) / 2
-        Dx = al_x * v + Df  # [m^2/y]
-        Dy = al_y * v + Df  # [m^2/y]
-        Dz = Dy / 10 + Df  # [m^2/y]
-
-        # used data
-        vr = v / R  # [m/y]
-        Dyr = Dy / R  # [m^2/y]
-        Dxr = Dx / R  # [m^2/y]
-        Dyr = Dy / R  # [m^2/y]
-        Dzr = Dz / R  # [m^2/y]
-
-        def C(x):
-            # Boundary Condition
-            if x <= 1e-6:
-                if y <= W / 2 and y >= -W / 2 and z <= z_2 and z >= z_1:
-                    C = Co * np.exp(-ga * t)
-                else:
-                    C = 0
-            else:
-                a = Co * np.exp(-ga * t) * x / (8 * np.sqrt(np.pi * Dxr))
-                roots = sp.special.roots_legendre(m)[0]
-                weights = sp.special.roots_legendre(m)[1]
-                # scaling
-                bot = 0
-                top = np.sqrt(np.sqrt(t))
-                Tau = (roots * (top - bot) + top + bot) / 2
-                Tau4 = Tau ** 4
-                # calculation
-                xTerm = (np.exp(-(((la - ga) * Tau4) + ((x - vr * Tau4) ** 2) / (4 * Dxr * Tau4)))) / (Tau ** 3)
-
-                yTerm = sp.special.erfc((y - W / 2) / (2 * np.sqrt(Dyr * Tau4))) - sp.special.erfc(
-                    (y + W / 2) / (2 * np.sqrt(Dyr * Tau4)))
-
-                zTerm = sp.special.erfc((z - z_2) / (2 * np.sqrt(Dzr * Tau4))) - sp.special.erfc(
-                    (z - z_1) / (2 * np.sqrt(Dzr * Tau4)))
-                Term = xTerm * yTerm * zTerm
-                Integrand = Term * (weights * (top - bot) / 2)
-
-                C = a * 4 * sum(Integrand)
-
-            return C
-
-        x_array = np.array([0])
-        c_array = np.array([C(0)])
-        x = 0
-        while C(x) >= Cthres:
-            x = x + 1
-            x_array = np.append(x_array, x)
-            c_array = np.append(c_array, C(x))
-        else:
-            lMax = "%.2f" % x
-
-        bio = Bio(Threshold_Concentration=Cthres, Time=t, Top_Source_Location=z_2,
-                  Input_Concentration=Co, Source_Width=W, Average_Linear_Groundwater_Velocity=v,
-                  Longitudinal_Dispersivity=al_x, Horizontal_Transverse_Dispersivity=al_y,
-                  Vertical_Transverse_Dispersivity=al_z, Effective_Diffusion_Coefficient=Df, R=R, Ga=ga, La=la, M=m,
+        gamma = form.Ga.data
+        lambda_eff = form.La.data
+        numberOfGaussPoints = form.M.data
+        lMax = bio(Cthres,time,H,c0,W,v,ax,ay,az,Df,R,gamma,lambda_eff,numberOfGaussPoints)
+        bio_screen = Bio(Threshold_Concentration=Cthres, Time=time, Top_Source_Location=H,
+                  Input_Concentration=c0, Source_Width=W, Average_Linear_Groundwater_Velocity=v,
+                  Longitudinal_Dispersivity=ax, Horizontal_Transverse_Dispersivity=ay,
+                  Vertical_Transverse_Dispersivity=az, Effective_Diffusion_Coefficient=Df, R=R, Ga=gamma, La=lambda_eff, M=numberOfGaussPoints,
                   Model_Plume_Length=lMax, bio=current_user)
 
-        db.session.add(bio)
+        db.session.add(bio_screen)
         db.session.commit()
-        #flash('Your entry has been added!', 'success')
+        flash('Your entry has been added!', 'success')
         return redirect(url_for('BioMultiple'))
     elif request.method == "GET":
         try:
@@ -744,6 +596,8 @@ def BioMultiple():
             db.session.commit()
             flash(f'Successfully deleted all data', category='success')
             return redirect(url_for('BioMultiple'))
+    elif not form.validate_on_submit():
+        flash('Something went wrong with entering your data, please check form - your entries have not been erased', category='danger')
     para = create_BioPlotMultiple(df['Site No.'].tolist(), table_data)
     y = df['Site No.']
     x = df['Site Unit']
@@ -798,6 +652,7 @@ def hamModelMultiple():
                   ham=current_user)
         db.session.add(ham)
         db.session.commit()
+        flash('Your entry has been added!', 'success')
         return redirect('/hamModelMultiple')
 
     elif request.method == "GET":
@@ -822,6 +677,8 @@ def hamModelMultiple():
             db.session.commit()
             flash(f'Successfully deleted all data', category='success')
             return redirect('/hamModelMultiple')
+    elif not form.validate_on_submit():
+        flash('Something went wrong with entering your data, please check form - your entries have not been erased', category='danger')
     para = create_HamPlotMultiple(df['Site No.'].tolist(), table_data)
     x = df['Site Unit']
     y = df['Site No.']
@@ -890,6 +747,7 @@ def liedl3DModelMultiple():
                           liedl3d=current_user)
         db.session.add(liedl3d)
         db.session.commit()
+        flash('Your entry has been added!', 'success')
         return redirect('/liedl3DModelMultiple')
 
     elif request.method == "GET":
@@ -903,6 +761,7 @@ def liedl3DModelMultiple():
             para = create_Liedl3DMultiple(siteUnit, table_data)
             return para
         except Exception as e:
+            print(e)
             pass
     elif "upload" in request.form:
         if request.method == 'POST':
@@ -914,6 +773,8 @@ def liedl3DModelMultiple():
             db.session.commit()
             flash(f'Successfully deleted all data', category='success')
             return redirect('/liedl3DModelMultiple')
+    elif not form.validate_on_submit():
+        flash('Something went wrong with entering your data, please check form - your entries have not been erased', category='danger')
     para = create_Liedl3DMultiple(df['Site No.'].tolist(), table_data)
     y = df['Site No.']
     x = df['Site Unit']
@@ -975,6 +836,7 @@ def MaierAndGrathwohlModelMultiple():
                                maiergrathwohl=current_user)
         db.session.add(maier)
         db.session.commit()
+        flash('Your entry has been added!', 'success')
         return redirect('/MaierAndGrathwohlModelMultiple')
     elif request.method == "GET":
         try:
@@ -999,6 +861,8 @@ def MaierAndGrathwohlModelMultiple():
             db.session.commit()
             flash(f'Successfully deleted all data', category='success')
             return redirect('/MaierAndGrathwohlModelMultiple')
+    elif not form.validate_on_submit():
+        flash('Something went wrong with entering your data, please check form - your entries have not been erased', category='danger')
     para = create_MaierAndGrathwohlPlotMultiple(df['Site No.'].tolist(), table_data)
     y = df['Site No.']
     x = df['Site Unit']
@@ -1060,6 +924,7 @@ def BirlaEtAlModelMultiple():
                       Model_Plume_Length=lMax, birla=current_user)
         db.session.add(birla)
         db.session.commit()
+        flash('Your entry has been added!', 'success')
         return redirect('/BirlaEtAlModelMultiple')
     elif request.method == "GET":
         try:
@@ -1083,6 +948,8 @@ def BirlaEtAlModelMultiple():
             db.session.commit()
             flash(f'Successfully deleted all data', category='success')
             return redirect('/BirlaEtAlModelMultiple')
+    elif not form.validate_on_submit():
+        flash('Something went wrong with entering your data, please check form - your entries have not been erased', category='danger')
     para = create_BirlaEtAlPlotMultiple(df['Site No.'].tolist(), table_data)
     y = df['Site No.']
     x = df['Site Unit']
@@ -1110,7 +977,8 @@ def numericalModel():
         h2 = form.h2.data
         hk = form.hk.data
         id = str(current_user.id)
-        parent_dir = '/home/vedaanti/Water'
+        # Replace this path with your path
+        parent_dir = 'C:\\Users\\Vedaanti Baliga\\Desktop\\Personal-code\\CAST'
         path = os.path.join(parent_dir, id)
         if not (h1 > h2):
             flash(
@@ -1124,6 +992,7 @@ def numericalModel():
                 bool = True
                 string = 'Maximum Plume Length(LMax): ' + str(lMax)
                 flash(string, 'success')
+                shutil.rmtree(path)
                 return render_template('NumericalModel/numericalNew.html', form=form, bool=bool, plot_url=plot_url)
             except Exception as e:
                 flash('No contour levels were found within the data range', 'danger')
