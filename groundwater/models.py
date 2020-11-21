@@ -22,6 +22,7 @@ class User(db.Model, UserMixin):
     liedl3d = db.relationship('Liedl3D', backref='liedl3d', lazy=True)
     birla = db.relationship('Birla', backref='birla', lazy=True)
     maiergrathwohl = db.relationship('MaierGrathwohl', backref='maiergrathwohl', lazy=True)
+    bio = db.relationship('Bio', backref='bio', lazy=True)
 
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(app.config['SECRET_KEY'], expires_sec)
@@ -94,6 +95,34 @@ class Chu(db.Model):
                f'{self.Reaction_Stoichiometric_Ratio},{self.Contaminant_Concentration},' \
                f'{self.Reactant_Concentration},{self.Biological_Factor},{self.Model_Plume_Length},{self.user_id})'
 
+class Bio(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    Threshold_Concentration = db.Column(db.Float, nullable=False)
+    Time = db.Column(db.Float, nullable=False)
+    Top_Source_Location = db.Column(db.Float, nullable=False)
+    Input_Concentration = db.Column(db.Float, nullable=False)
+    Source_Width = db.Column(db.Float, nullable=False)
+    Average_Linear_Groundwater_Velocity = db.Column(db.Float, nullable=False)
+    Longitudinal_Dispersivity = db.Column(db.Float, nullable=False)
+    Horizontal_Transverse_Dispersivity = db.Column(db.Float, nullable=False)
+    Vertical_Transverse_Dispersivity = db.Column(db.Float, nullable=False)
+    Effective_Diffusion_Coefficient = db.Column(db.Float, nullable=False)
+    R = db.Column(db.Float, nullable=False)
+    Ga = db.Column(db.Float, nullable=False)
+    La = db.Column(db.Float, nullable=False)
+    M = db.Column(db.Float, nullable=False)
+    Model_Plume_Length = db.Column(db.Float, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __ref__(self):
+        return f'Bio({self.id},{self.Threshold_Concentration},{self.Time},' \
+               f'{self.Top_Source_Location},{self.Input_Concentration},{self.Source_Width}' \
+               f'{self.Average_Linear_Groundwater_Velocity},{self.Longitudinal_Dispersivity},' \
+               f'{self.Horizontal_Transverse_Dispersivity},{self.Vertical_Transverse_Dispersivity}' \
+               f'{self.Effective_Diffusion_Coefficient},{self.R},{self.Ga},{self.La},{self.M})' \
+               f'{self.Model_Plume_Length},{self.user_id})'
+
+
 
 class Ham(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -161,4 +190,6 @@ class MaierGrathwohl(db.Model):
     def __ref__(self):
         return f'MaierGrathwohl({self.id},{self.Aquifer_thickness},{self.Vertical_Transverse_Dispersivity},' \
                f'{self.Stoichiometry_coefficient},{self.Contaminant_Concentration},{self.Reactant_Concentration})'
+
+
 

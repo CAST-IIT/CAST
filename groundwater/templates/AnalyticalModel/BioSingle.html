@@ -1,0 +1,167 @@
+{% extends 'baseLayoutSinglePlots.html' %}
+{% block title %}BioScreen{%endblock%}
+{% block li %}
+<div class="dropdownNew">
+            <button class="dropbtnNew">BIOSCREEN-AT
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-contentNew">
+                <a href="{{ url_for('documentationBio')}}">Model Description</a>
+                <a href="{{ url_for('BioMultiple')}}">Multiple Computing Simulation</a>
+            </div>
+        </div>
+{%endblock%}
+{% block content %}
+    <div class="graph">
+        <div class="row">
+            <div class="col-lg-5 col-sm-5 col-xs-5">
+                <h2>BioScreen</h2>
+                <img src="static/bio.png">
+                <br>
+                <form class="form-inline" action="/BioSinglePlot" method="POST">
+                    <div class="form-group">
+                        1.Threshold Concentration (Cthres) :<label class="sr-only">Threshold Concentration</label>
+                        <input type="number" class="form-control" id="Threshold_Concentration" name="Threshold_Concentration" placeholder="Chres" required min=0  step="any" value="5e-5">
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                        2.Time (t) : <label class="sr-only">Time</label>
+                        <input type="number" class="form-control" name="Time" id="Time" placeholder="t" required min=0 step="any" value="20" max="1000">
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                        3.Source Thickness (H): <label class="sr-only">Top Source</label>
+                        <input type="number" class="form-control" name="Top_Of_Source" id="Top_Of_Source" placeholder="z_2" required min="0" max="50" step="0.001" value="6.1">
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                        4.Source Concentration (c0) : <label class="sr-only">Concentration</label>
+                        <input type="number" class="form-control" name="Input_Concentration" id="Input_Concentration" placeholder="Co" required min="0" max="1000" step="0.001" value="106.35">
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                        5.Source Width (W) : <label class="sr-only">Width</label>
+                        <input type="number" class="form-control" name="Width" id="Width" placeholder="W" required min="0" max="1000" step="0.001" value="20">
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                        6.Average Linear Groundwater Velocity (v): <label class="sr-only">Velocity</label>
+                        <input type="number" class="form-control" name="Velocity" id="Velocity" placeholder="v" required min=10 max=1000  step="any" value="292">
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                        7.Longitudinal Dispersivity (αx) : <label class="sr-only">Longitudinal Dispersivity</label>
+                        <input type="number" class="form-control" name="Longitudinal" id="Longitudinal" placeholder="al_x" required min="1" max="100" step="0.001" value="10.7">
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                        8.Horizontal Transverse Dispersivity (αy) : <label class="sr-only">Horizontal Dispersivity</label>
+                        <input type="number" class="form-control" name="Horizontal" id="Horizontal" placeholder="al_y" required min=0.1 max="10" step="any" value="1.1">
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                        9.Vertical Transverse Dispersivity (αz) : <label class="sr-only">Vertical Dispersivity</label>
+                        <input type="number" class="form-control" name="Vertical" id="Vertical" placeholder="al_z" required min=0.01 max="1" step="any" value="0.11">
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                        10.Effective Diffusion Coefficient (Df) : <label class="sr-only">Diffusion</label>
+                        <input type="number" class="form-control" name="Diffusion" id="Diffusion" placeholder="Df" required min=0 max="0.1" step="any" value="0">
+                    </div>
+                    <br><br>
+                     <div class="form-group">
+                        11.Retardation Factor (R) : <label class="sr-only">R</label>
+                        <input type="number" class="form-control" name="R" id="R" placeholder="R" required min=0 step="any" value="1">
+                    </div>
+                    <br><br>
+                     <div class="form-group">
+                        12.Source Decay Coefficient (γ) : <label class="sr-only">Ga</label>
+                        <input type="number" class="form-control" name="Ga" id="Ga" placeholder="Ga" required min=0 max="1" step="any" value="0">
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                        13.Effective first-order Decay Coefficient (λeff) : <label class="sr-only">La</label>
+                        <input type="number" class="form-control" name="La" id="La" placeholder="La" required min="0" max="1" step="0.001" value="4.45e-1">
+                    </div>
+                    <br><br>
+                     <div class="form-group">
+                        14.Number of Gauss points : <label class="sr-only">Gauss Points</label>
+                        <input type="number" class="form-control" name="M" id="M" placeholder="M" required min=0 step="any" value="60">
+                    </div>
+                    <br><br>
+                <br>
+                <div>
+                    <button class="btn btn-primary" type="submit" id="b">Generate Graph</button>
+                </div>
+                </form>
+                    <br>
+                    <div id="successAlert" class="alert alert-success" role="alert" style="display:none;"></div>
+                <div class="grid-container">
+                    <div id="sliderTop" class="slidecontainer" style="display: none">
+                    <label>Source Thickness</label>
+                    <input type="range" min="0" max="50" value="4" step="0.001" class="slider" id='scatterplot_fits'>
+                    <p>Value: <span id="thicknessVal"></span></p>
+                    </div>
+                    <div id="sliderConcentration" class="slidecontainer" style="display: none">
+                    <label> Source Concentration</label>
+                    <input type="range" min="0" max="1000" value="1" step="0.001" class="slider" id='parameters'>
+                    <p>Value: <span id="dispersivityVal"></span></p>
+                    </div>
+                    <div id="sliderWidth" class="slidecontainer" style="display: none">
+                    <label> Source Width </label>
+                    <input type="range" min="0" max="1000" value="20" step="0.001" class="slider" id='parameters2'>
+                    <p>Value: <span id="widthVal"></span></p>
+                    </div>
+                    <div id="sliderLongitudinal" class="slidecontainer" style="display: none">
+                    <label> Longitudinal Dispersivity </label>
+                    <input type="range" min="1" max="100" value="10" step="0.001" class="slider" id='parameters3'>
+                    <p>Value: <span id="longitudinalVal"></span></p>
+                    </div>
+                    <div id="sliderLa" class="slidecontainer" style="display: none">
+                    <label> Effective first-order Decay Coefficient </label>
+                    <input type="range" min="0" max="1" value="0.1" step="0.001" class="slider" id='parameters4'>
+                    <p>Value: <span id="laVal"></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-6 col-xs-6">
+                <button class="btn btn-primary" id="fullScreen">View full screen graph</button>
+                <div id="response">
+                    <div class="graph" id="year_histogram">
+                        <script>
+                            var graphs = {{year_histogram | safe}};
+                             Plotly.newPlot('year_histogram',graphs['data'],graphs['layout'],{ responsive: true });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script src="{{ url_for('static', filename='js/BioSingle.js') }}"></script>
+{% endblock %}
+
+{% block script %}
+var longitudinalSlider = document.getElementById("parameters3");
+var widthSlider = document.getElementById("parameters2");
+var laSlider = document.getElementById("parameters4");
+
+var longitudinalOutput = document.getElementById("longitudinalVal");
+var widthOutput = document.getElementById("widthVal");
+var laOutput = document.getElementById("laVal");
+
+longitudinalOutput.innerHTML = longitudinalSlider.value;
+widthOutput.innerHTML = widthSlider.value;
+laOutput.innerHTML = laSlider.value;
+
+widthSlider.oninput = function() {
+  widthOutput.innerHTML = this.value;
+}
+
+longitudinalSlider.oninput = function() {
+  longitudinalOutput.innerHTML = this.value;
+}
+
+laSlider.oninput = function() {
+  laOutput.innerHTML = this.value;
+}
+{% endblock %}

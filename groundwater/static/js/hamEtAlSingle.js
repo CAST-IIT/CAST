@@ -5,6 +5,7 @@ function plotScatterData(thickness, dispersivity) {
 				Dispersivity : dispersivity,
                 Acceptor : $('#Acceptor').val(),
                 Donor : $('#Donor').val(),
+                Stoichiometric : $('#Stoichiometric').val(),
                 Porosity : $('#Porosity').val(),
 				Result : $('#Thickness').val()
 			},
@@ -20,12 +21,17 @@ function plotScatterData(thickness, dispersivity) {
 function fetchValuesAndPlotData() {
     let thickness = $('#scatterplot_fits').val();
     let dispersivity = $('#parameters').val();
-    console.log(thickness);
+    $("#Thickness").val(thickness);
+    $("#Dispersivity").val(dispersivity);
     plotScatterData(thickness, dispersivity);
 }
 
 $('form').on("submit",function(event){
     event.preventDefault();
+    $("#scatterplot_fits").val($('#Thickness').val());
+   $("#thicknessVal").text($('#Thickness').val());
+   $("#parameters").val($('#Dispersivity').val());
+   $("#dispersivityVal").text($('#Dispersivity').val());
    $('#sliderThickness').css('display', '');
    $('#sliderDispersivity').css('display', '');
    plotScatterData($('#Thickness').val(), $('#Dispersivity').val());

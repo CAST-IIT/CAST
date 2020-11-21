@@ -36,6 +36,24 @@ class Parameters:
         'Biological Factor',
         'Model Plume Length'
     ]
+    Bio_data_columns = [
+        'ID',
+        'Threshold Concentration',
+        'Time',
+        'Source Thickness',
+        'Source Concentration',
+        'Source Width',
+        'Average Linear Groundwater Velocity',
+        'Longitudinal Dispersivity',
+        'Horizontal Transverse Dispersivity',
+        'Vertical Transverse Dispersivity',
+        'Effective Diffusion Coefficient',
+        'Retardation Factor',
+        'Source Decay Coefficient',
+        'Effective first-order Decay Coefficient',
+        'Number of Gauss points',
+        'Model Plume Length'
+    ]
     Ham_data_columns = [
         'ID',
         'Width',

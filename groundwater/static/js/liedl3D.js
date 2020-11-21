@@ -14,6 +14,7 @@ function plotScatterData(thickness, dispersivity, VDispersivity, Width) {
             url: '/liedl3DSinglePlot',
             type: "POST",
         success: function(resp,data){
+            console.log(resp.Result);
             $('#successAlert').text("Maximum Plume Length(LMax): "+resp.Result).show();
             $('div#response').html(resp.data);
         }
@@ -25,12 +26,25 @@ function fetchValuesAndPlotData() {
     let dispersivity = $('#parameters').val();
     let VDispersivity = $('#verticalDispersivity').val();
     let Width = $('#width').val();
-    console.log(Width);
+    $("#Thickness").val(thickness);
+    $("#Dispersivity").val(dispersivity);
+    $("#VDispersivity").val(VDispersivity);
+    $("#SourceWidth").val(Width);
     plotScatterData(thickness, dispersivity, VDispersivity, Width);
 }
 
 $('form').on("submit",function(event){
     event.preventDefault();
+   $("#scatterplot_fits").val($('#Thickness').val());
+   $("#thicknessVal").text($('#Thickness').val());
+   $("#parameters").val($('#Dispersivity').val());
+   $("#dispersivityVal").text($('#Dispersivity').val());
+
+   $("#verticalDispersivity").val($('#VDispersivity').val());
+   $("#VdispersivityVal").text($('#VDispersivity').val());
+   $("#width").val($('#SourceWidth').val());
+   $("#widthVal").text($('#SourceWidth').val());
+
    $('#sliderThickness').css('display', '');
    $('#sliderDispersivity').css('display', '');
    $('#sliderVerticalDispersivity').css('display', '');
