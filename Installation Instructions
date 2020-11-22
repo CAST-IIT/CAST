@@ -21,6 +21,7 @@ Please note :
     ```
     pip install virtualenv
     ```
+* Install [git](https://git-scm.com/downloads)
 
 ### Project Installation
   1. Clone the repository - `git clone <remote-url>`
@@ -28,6 +29,7 @@ Please note :
   3. Set up the environment :
       * Create virtual environment files - `virtualenv venv`
       * Activate virtual environment - `cd venv\Scripts` then type `activate`
+      * Cd to previous directory - `cd../../`
   4. Install dependencies - `pip install -r requirements.txt`
 
 
@@ -52,12 +54,9 @@ Please note :
   xiii.	After completing the setup, you can now navigate to the MySQL Workbench. In the workbench, you will see the root user, click on that and enter the password that you had saved before.
   xiv.	Now, type on the workbench : `create database groundwater` and exit the workbench
   xv. In the config.py change the ‘SQLALCHEMY_DATABASE_URI’ entry according to your password for root : 'mysql://root:your_password_here@localhost/groundwater' 
-  xvi.	Go back to the opened command line and cd back to the cloned folder by doing : `cd../../`
-  xvii.	Type `python` on the command line and then type the following lines :
-    a. `from groundwater import db`
-    b. `from groundwater.models import User`
-    c.  `db.create_all()`
-    d. `exit()`      
+  xvi.	Go back to the opened command line and cd back to the cloned folder (CAST) by doing : `cd../../`
+  xvii.	Type python3 create_database.py or py create_database.py  
+   
 MySql Setup : (Linux)
   i.	Follow instructions on https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-18-04
   ii.	After installing MySQL, follow steps xiv – xvi from the windows mysql setup for the command line in your system.
@@ -65,14 +64,14 @@ MySql Setup : (Linux)
 5. Make changes in some files according to your file system :
   i.	For numerical model : 
   a.	In groundwater/water.py, last function in the code(numericalModel) : 
-          parent_dir = 'your_directory/Water'
+          parent_dir = 'your_directory\\CAST'
   b.	In groundwater/NumericalModel/numericalModel.py :
-          exe_name_mf = copy('your_directory/mf2005', path)
-          exe_name_mt = copy('your_directory /mt3dms', path)
+          exe_name_mf = copy('your_directory\\CAST\\mf2005.exe', path)
+          exe_name_mt = copy('your_directory\\CAST\\mt3dms.exe', path)
 
 6.  Starting the server :
-  i.	Lastly, go back to the command line where the virtual environment is activated, and inside the cloned folder, type : python3 run.py
-  ii.	Go to the browser and type on ‘http://127.0.0.1:5000/’ to access your private CAST browser
+  i.	Lastly, inside the cloned folder (CAST), type : python3 run.py
+  ii.	Wait for the code to display the ip address, then go to the browser and type on ‘http://127.0.0.1:5000/’ to access your private CAST browser
   
 7. Setting up the interpreter and Pycharm environment:
   i. First, open the run.py file in pycharm.
