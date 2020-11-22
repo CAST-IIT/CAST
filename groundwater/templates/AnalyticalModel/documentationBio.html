@@ -1,0 +1,44 @@
+{% extends 'baseLayoutDocumentation.html' %}
+{% block title %}BioScreen{% endblock %}
+{% block li %}
+        <div class="dropdownNew">
+            <button class="dropbtnNew">BIOSCREEN-AT
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-contentNew">
+                <a href="{{ url_for('BioSingle')}}">Single Computing Simulation</a>
+                <a href="{{ url_for('BioMultiple')}}">Multiple Computing Simulation</a>
+            </div>
+        </div>
+{% endblock %}
+{% block content %}
+<h1 id="2.-Horizontal-oriented-2D-Model--–-BioScreen"><strong>BIOSCREEN–AT – Karanovic et al. (2007)</strong><a class="anchor-link" href="#2.-Horizontal-oriented-2D-Model--%E2%80%93-Chu-et-al.-(2004)">¶</a></h1>
+<p>The model provides a three-dimensional solution for transport of dissolved contaminants, incorporating natural attenuation processes. 
+As shown in Figure 1, the source is given as a patch specified-concentration boundary condition. </p>
+<p><img src="static/bio_main.png" alt="" style="zoom:40%;"></p>
+<p><i>Figure 1: Conceptual Model</i></p>
+    <p>Newell et al. (1997)/ Karanovic et al. (2007) Provide the following expression for an exact analytical solution:</p>
+<p><img src="static/bio.png" alt="" style="zoom:40%;"></p>
+<p>with:</p>
+<p>$c_{o}$ = initial source concentration<br>
+$D_{x}^{'}$ = dispersion coefficient divided by retardation factor Dx/R<br>
+$D_{y}^{'}$ = dispersion coefficient divided by retardation factor Dy/R<br>
+$D_{z}^{'}$ = dispersion coefficient divided by retardation factor Dz/R<br>
+$\gamma$ = source decay coefficient<br>
+$\lambda_{eff}$ = effective first order decay coefficient</p>
+$W$ = source width</p>
+$H$ = source depth</p>
+<p><strong>The model is based on the following assumptions:</strong></p>
+<ol>
+<li>Aquifer extends semi-infinite in x-direction, infinite in y-direction and extends from water table to relatively large depth.</li>
+<li>Groundwater flow is steady and one dimensional.</li>
+<li>The solute undergoes equilibrium sorption and first-order transformation reactions.</li>
+<li>The aquifer is homogeneous and Lmax is always found on the center line.</li>
+</ol>
+<p>The CAST Project acquires the maximum plume length Lmax from this model, using Gauss-Legendre-Quadrature to obtain a solution. Figure 2 shows the concentration of the contaminant along x-direction.</p>
+<p><img src="static/bio_graphpng.png" alt="" style="zoom:70%;"></p>
+<p><i>Figure 2: Concentration along center line</i></p>
+<p><strong>Reference:</strong></p>
+<p>Marinko Karanovic, Christopher J. Neville, and Charles B. Andrews. BIOSCREEN-AT: BIOSCREEN with an Exact Analytical Solution. Vol. 45, No. 2 GROUND WATER March–April 2007 (pages 242–245).</p>
+<p> S.S. Papadopulos & Associates, Inc. , <a href="https://www.sspa.com/software/bioscreen">https://www.sspa.com/software/bioscreen</a></p>
+{% endblock %}

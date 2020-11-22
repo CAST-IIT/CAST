@@ -1,240 +1,238 @@
-import math
+from flask_login import current_user
+from flask_wtf import FlaskForm
+from math import e
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, FloatField, IntegerField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, InputRequired, NumberRange, Regexp, email_validator
 
-import pandas as pd
-from flask import flash, redirect, request
-from werkzeug.utils import secure_filename
-from groundwater.liedl3D import create_liedl3DPlot
-
-from groundwater.parameters import Parameters
-
-
-def allowed_file(check_file, current_user, current_table, db):
-    # check if the post request has the file part
-    if 'file' not in request.files:
-        flash('No file part', category='danger')
-        return redirect(request.url)
-    file = request.files['file']
-    # if user does not select file, browser also
-    # submit an empty part without filename
-    if file.filename == '':
-        flash('No selected file', category='danger')
-        return redirect(request.url)
-    if file and allowed_extension(file.filename):
-        filename = secure_filename(file.filename)
-        plume = pd.read_csv(file)
-        check = check_file(plume, current_user, current_table, db)
-        if check:
-            flash(f'Successfully uploaded the file {filename}', category='success')
-        # else:
-        #     flash(f'Problem parsing the parameters.\n'
-        #           f'Please check that parameter heading and values for parameters are matching'
-        #           f' the permitted codes.\n'
-        #           f'Kindly refer to the sample csv file for details.',
-        #           category='danger')
-    else:
-        flash('Incorrect file type!', category='danger')
-        return redirect(request.url)
+from groundwater.models import User
 
 
-def allowed_extension(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in Parameters.Extensions.ALLOWED_EXTENSIONS
+class RegistrationForm(FlaskForm):
+    username = StringField('Username',
+                           validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    password = PasswordField('Password',
+                             validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password')])
+    organisation = StringField('Organisation',
+                               validators=[DataRequired()])
+    country = StringField('Country',
+                          validators=[DataRequired()])
+    submit = SubmitField('Sign Up')
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user:
+            raise ValidationError('That username is taken. Please choose another one')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user:
+            raise ValidationError('That email is taken. Please choose another one')
 
 
-def convert_and_clean_inputs_database(plume, parameter_name):
-    parameter = plume[parameter_name].values.tolist()
-    parameter = [x for x in parameter if str(x) != 'nan']
-    for idx, item in enumerate(parameter):
-        if item == -1:
-            parameter[idx] = None
-    return parameter
+class LoginForm(FlaskForm):
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    password = PasswordField('Password',
+                             validators=[DataRequired()])
+    remember = BooleanField('Remember Me')
+    submit = SubmitField('Login')
 
 
-def convert_and_clean_inputs(plume, parameter_name):
-    parameter = plume[parameter_name].values.tolist()
-    parameter = [x for x in parameter if str(x) != 'nan']
-    return parameter
+class UpdateAccountForm(FlaskForm):
+    username = StringField('Username',
+                           validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    submit = SubmitField('Update')
+
+    def validate_username(self, username):
+        if username.data != current_user.username:
+            user = User.query.filter_by(username=username.data).first()
+            if user:
+                raise ValidationError('That username is taken. Please choose another one')
+
+    def validate_email(self, email):
+        if email.data != current_user.email:
+            user = User.query.filter_by(email=email.data).first()
+            if user:
+                raise ValidationError('That email is taken. Please choose another one')
 
 
-def check_file_for_database(plume, current_user, User_Database, db):
-    try:
-        lMax = convert_and_clean_inputs_database(plume, 'Plume length[m]')
-        site = convert_and_clean_inputs_database(plume, 'Site Unit')
-        compound = convert_and_clean_inputs_database(plume, 'Compound')
-        atv = convert_and_clean_inputs_database(plume, 'Aquifer thickness[m]')
-        w = convert_and_clean_inputs_database(plume, 'Plume Width[m]')
-        hc = convert_and_clean_inputs_database(plume, 'Hydraulic conductivity[10-3 [m/s]]')
-        ed = convert_and_clean_inputs_database(plume, 'Electron Donor[mg/l]')
-        o2 = convert_and_clean_inputs_database(plume, 'Electron Acceptors : O2[mg/l]')
-        no3 = convert_and_clean_inputs_database(plume, 'NO3[mg/l]')
-        so4 = convert_and_clean_inputs_database(plume, 'SO4[mg/l]')
-        fe = convert_and_clean_inputs_database(plume, 'Fe(II)[mg/l]')
-        ps = convert_and_clean_inputs_database(plume, 'Plume state')
-        cg = convert_and_clean_inputs_database(plume, 'Chem. Group')
-        cy = convert_and_clean_inputs_database(plume, 'Country')
-        ls = convert_and_clean_inputs_database(plume, 'Literature Source')
-        plume_length = len(lMax)
-        for i in range(plume_length):
-            user_db = User_Database(
-                Site_Unit=site[i], Aquifer_thickness=atv[i],
-                Plume_length=lMax[i], Plume_Width=w[i],
-                Hydraulic_conductivity=hc[i], Electron_Donor=ed[i],
-                O2=o2[i], NO3=no3[i], SO4=so4[i], Fe=fe[i], Plume_state=ps[i],
-                Chem_Group=cg[i], Country=cy[i], Literature_Source=ls[i],
-                user_database=current_user, Compound=compound[i])
-            db.session.add(user_db)
-        db.session.commit()
-    except Exception as e:
-        return False
-    return True
+class RequestResetForm(FlaskForm):
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError('There is no account with that email. You must register first.')
 
 
-def check_file_for_liedl_equation(plume, current_user, Liedl, db):
-    try:
-        m = convert_and_clean_inputs(plume, 'Aquifer thickness')
-        tv = convert_and_clean_inputs(plume, 'Transverse Dispersivity')
-        a = convert_and_clean_inputs(plume, 'Reaction Stochiometric coefficient ')
-        ca = convert_and_clean_inputs(plume, 'Contaminant Concentration')
-        cd = convert_and_clean_inputs(plume, 'Reactant Concentration')
-        plume_length = len(m)
-        for i in range(plume_length):
-            liedl = Liedl(
-                Aquifer_thickness=m[i],
-                Transverse_Dispersivity=tv[i], Stoichiometry_coefficient=a[i],
-                Contaminant_Concentration=ca[i],
-                Reactant_Concentration=cd[i],
-                Model_Plume_Length=((4 * m[i] * m[i]) / (math.pi * math.pi * tv[i])) * math.log(
-                    ((a[i] * cd[i] + ca[i]) / ca[i]) * (4 / math.pi)),
-                liedl=current_user
-            )
-            db.session.add(liedl)
-        db.session.commit()
-    except Exception as e:
-        return False
-    return True
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')
+
+#
+# def less_than(FlaskForm, field):
+#     if field.data
+#         raise ValidationError('Field must be less than 5')
 
 
-def check_file_for_chu_equation(plume, current_user, Chu, db):
-    try:
-        m = convert_and_clean_inputs(plume, 'Width')
-        tv = convert_and_clean_inputs(plume, 'Transverse Dispersivity')
-        a = convert_and_clean_inputs(plume, 'Reaction Stoichiometric Ratio')
-        ca = convert_and_clean_inputs(plume, 'Contaminant Concentration')
-        cd = convert_and_clean_inputs(plume, 'Reactant Concentration')
-        e = convert_and_clean_inputs(plume, 'Biological Factor')
-        plume_length = len(m)
-        for i in range(plume_length):
-            chu = Chu(
-                Width=m[i], Transverse_Horizontal_Dispersivity=tv[i], Reaction_Stoichiometric_Ratio=a[i],
-                Contaminant_Concentration=ca[i], Biological_Factor=e[i],
-                Reactant_Concentration=cd[i],
-                Model_Plume_Length=((math.pi * m[i] * m[i]) / (16 * tv[i])) * (((a[i] * cd[i]) / (ca[i] - e[i])) ** 2),
-                chu=current_user
-            )
-            db.session.add(chu)
-        db.session.commit()
-    except Exception as e:
-        return False
-    return True
+class UserDatabaseForm(FlaskForm):
+    Site_Unit = StringField('Site Unit', validators=[InputRequired()])
+    Compound = StringField('Compound', validators=[InputRequired()])
+    Aquifer_thickness = FloatField('Aquifer Thickness', validators=[InputRequired()])
+    Plume_length = FloatField('Plume Length', validators=[InputRequired()])
+    Plume_Width = FloatField('Plume Width', validators=[InputRequired()])
+    Hydraulic_conductivity = FloatField('Hydraulic Conductivity', validators=[InputRequired()])
+    Electron_Donor = FloatField('Electron Donor', validators=[InputRequired()])
+    O2 = FloatField('O2', validators=[InputRequired()])
+    NO3 = FloatField('NO3', validators=[InputRequired()])
+    SO4 = FloatField('SO4', validators=[InputRequired()])
+    Fe = FloatField('Fe', validators=[InputRequired()])
+    Plume_state = StringField('Plume State', validators=[InputRequired()])
+    Chem_Group = StringField('Chemical Group', validators=[InputRequired()])
+    Country = StringField('Country', validators=[InputRequired()])
+    Literature_Source = StringField('Literature Source', validators=[InputRequired()])
+    submit = SubmitField('Add Data')
 
 
-def check_file_for_ham_equation(plume, current_user, Ham, db):
-    try:
-        m = convert_and_clean_inputs(plume, 'Discharge')
-        tv = convert_and_clean_inputs(plume, 'Horizontal Transverse Dispersivity')
-        ca = convert_and_clean_inputs(plume, 'Contaminant Concentration')
-        a = convert_and_clean_inputs(plume, 'Gamma')
-        cd = convert_and_clean_inputs(plume, 'Reactant Concentration')
-        plume_length = len(m)
-        for i in range(plume_length):
-            ham = Ham(
-                Width=m[i], Horizontal_Transverse_Dispersivity=tv[i],
-                Contaminant_Concentration=ca[i],
-                Reactant_Concentration=cd[i],
-                Gamma=a[i],
-                Model_Plume_Length=((m[i] * m[i]) / (4 * math.pi * tv[i])) * (((a[i]*cd[i]) / ca[i]) ** 2),
-                ham=current_user
-            )
-            db.session.add(ham)
-        db.session.commit()
-    except Exception as e:
-        return False
-    return True
+class LiedlForm(FlaskForm):
+    Aquifer_thickness = FloatField('Aquifer Thickness', validators=[DataRequired()])
+    Transverse_Dispersivity = FloatField('Transverse Dispersivity', validators=[InputRequired()])
+    Stoichiometry_coefficient = FloatField('Stoichiometry coefficient', validators=[InputRequired()])
+    Contaminant_Concentration = FloatField('Contaminant Concentration', validators=[InputRequired()])
+    Reactant_Concentration = FloatField('Reactant Concentration', validators=[InputRequired()])
+    submit = SubmitField('Generate Graph')
 
 
-def check_file_for_liedl3d_equation(plume, current_user, Liedl3D, db):
-    try:
-        m = convert_and_clean_inputs(plume, 'Source Thickness')
-        htv = convert_and_clean_inputs(plume, 'Horizontal Transverse Dispersivity')
-        tv = convert_and_clean_inputs(plume, 'Vertical Transverse Dispersivity')
-        w = convert_and_clean_inputs(plume, 'Source Width')
-        ca = convert_and_clean_inputs(plume, 'Partner Reactant Concentration')
-        cth = convert_and_clean_inputs(plume, 'Threshold Contaminant Concentration')
-        a = convert_and_clean_inputs(plume, 'Reaction Stoichiometric Ratio')
-        cd = convert_and_clean_inputs(plume, 'Contaminant Concentration')
-        plume_length = len(m)
-        for i in range(plume_length):
-            input = ca[i], cd[i], cth[i], a[i], m[i], htv[i], tv[i], w[i]
-            year_histogram, lMax = create_liedl3DPlot(input)
-            liedl3d = Liedl3D(
-                Source_Thickness=m[i], Horizontal_Transverse_Dispersivity=htv[i],
-                Vertical_Transverse_Dispersivity=tv[i], Stoichiometric_Ratio=a[i],
-                Contaminant_Concentration=ca[i], Source_Width=w[i], Threshold_Contaminant_Concentration=cth[i],
-                Partner_Reactant_Concentration=cd[i],
-                Model_Plume_Length=lMax, liedl3d=current_user
-            )
-            db.session.add(liedl3d)
-        db.session.commit()
-    except Exception as e:
-        return False
-    return True
+class ChuForm(FlaskForm):
+    Width = FloatField('Width', validators=[InputRequired()])
+    Transverse_Horizontal_Dispersivity = FloatField('Transverse Horizontal Dispersivity', validators=[InputRequired()])
+    Reaction_Stoichiometric_Ratio = FloatField('Reaction Stoichiometric Ratio', validators=[InputRequired()])
+    Contaminant_Concentration = FloatField('Contaminant Concentration', validators=[InputRequired()])
+    Reactant_Concentration = FloatField('Reactant Concentration', validators=[InputRequired()])
+    Biological_Factor = FloatField('Biological Factor', validators=[InputRequired("Please enter a valid value")])
+    submit = SubmitField('Generate Graph')
+
+class BioForm(FlaskForm):
+    Threshold_Concentration = FloatField('Threshold Concentration', validators=[InputRequired()])
+    Time = FloatField('Time', validators=[InputRequired()])
+    Top_Source_Location = FloatField('Source Thickness', validators=[InputRequired()])
+    Input_Concentration = FloatField('Source Concentration', validators=[InputRequired()])
+    Source_Width = FloatField('Source Width', validators=[InputRequired()])
+    Average_Linear_Groundwater_Velocity = FloatField('Average Linear Groundwater Velocity', validators=[InputRequired("Please enter a valid value")])
+    Longitudinal_Dispersivity = FloatField('Longitudinal Dispersivity', validators=[InputRequired()])
+    Horizontal_Transverse_Dispersivity = FloatField('Horizontal Transverse Dispersivity', validators=[InputRequired()])
+    Vertical_Transverse_Dispersivity = FloatField('Vertical Transverse Dispersivity', validators=[InputRequired()])
+    Effective_Diffusion_Coefficient = FloatField('Effective Diffusion Coefficient', validators=[InputRequired()])
+    R = FloatField('Retardation Factor', validators=[InputRequired()])
+    Ga = FloatField('Source Decay Coefficient', validators=[InputRequired()])
+    La = FloatField('Effective first-order Decay Coefficient', validators=[InputRequired()])
+    M = FloatField('Number of Gauss points', validators=[InputRequired()])
+    submit = SubmitField('Generate Graph')
+
+class HamForm(FlaskForm):
+    Width = FloatField('Width', validators=[InputRequired()])
+    Horizontal_Transverse_Dispersivity = FloatField('Horizontal Transverse Dispersivity', validators=[InputRequired()])
+    Contaminant_Concentration = FloatField('Contaminant Concentration', validators=[InputRequired()])
+    Reactant_Concentration = FloatField('Reactant Concentration', validators=[InputRequired()])
+    Gamma = FloatField('Gamma', validators=[InputRequired()])
+    submit = SubmitField('Generate Graph')
 
 
-def check_file_for_maier_and_grathwohl_equation(plume, current_user, MaierGrathwohl, db):
-    try:
-        m = convert_and_clean_inputs(plume, 'Aquifer Thickness')
-        tv = convert_and_clean_inputs(plume, 'Vertical Transverse Dispersivity')
-        a = convert_and_clean_inputs(plume, 'Reaction Stoichiometric Ratio')
-        cd = convert_and_clean_inputs(plume, 'Contaminant Concentration')
-        ca = convert_and_clean_inputs(plume, 'Partner Reactant Concentration')
-        plume_length = len(m)
-        for i in range(plume_length):
-            maiergrathwohl = MaierGrathwohl(
-                Aquifer_thickness=m[i],
-                Vertical_Transverse_Dispersivity=tv[i], Stoichiometry_coefficient=a[i],
-                Contaminant_Concentration=ca[i],
-                Reactant_Concentration=cd[i],
-                Model_Plume_Length=0.5 * ((m[i] * m[i]) / tv[i]) * (((a[i] * cd[i]) / ca[i]) ** 0.3),
-                maiergrathwohl=current_user
-            )
-            db.session.add(maiergrathwohl)
-        db.session.commit()
-    except Exception as e:
-        return False
-    return True
+class Liedl3DForm(FlaskForm):
+    Source_Thickness = FloatField('Source Thickness', validators=[InputRequired()])
+    Vertical_Transverse_Dispersivity = FloatField('Vertical Transverse Dispersivity', validators=[InputRequired()])
+    Source_Width = FloatField('Source Width', validators=[InputRequired()])
+    Horizontal_Transverse_Dispersivity = FloatField('Horizontal Transverse Dispersivity', validators=[InputRequired()])
+    Stoichiometric_Ratio = FloatField('Stoichiometric Ratio', validators=[InputRequired()])
+    Partner_Reactant_Concentration = FloatField('Partner Reactant Concentration', validators=[InputRequired()])
+    Contaminant_Concentration = FloatField('Contaminant Concentration', validators=[InputRequired()])
+    Threshold_Contaminant_Concentration = FloatField('Threshold Contaminant Concentration', validators=[InputRequired()])
+    submit = SubmitField('Generate Graph')
 
 
-def check_file_for_birla_equation(plume, current_user, Birla, db):
-    try:
-        m = convert_and_clean_inputs(plume, 'Aquifer Thickness')
-        tv = convert_and_clean_inputs(plume, 'Vertical Transverse Dispersivity')
-        a = convert_and_clean_inputs(plume, 'Reaction Stoichiometric Ratio')
-        ca = convert_and_clean_inputs(plume, 'Contaminant Concentration')
-        cd = convert_and_clean_inputs(plume, 'Partner Reactant Concentration')
-        r = convert_and_clean_inputs(plume, 'Recharge Rate')
-        plume_length = len(m)
-        for i in range(plume_length):
-            birla = Birla(
-                Aquifer_thickness=m[i],
-                Vertical_Transverse_Dispersivity=tv[i], Stoichiometry_coefficient=a[i],
-                Contaminant_Concentration=ca[i],
-                Reactant_Concentration=cd[i], Recharge_Rate=r[i],
-                Model_Plume_Length=(1 - (0.047 * (m[i] ** 0.404) * (r[i] ** 1.883))) * (
-                            (4 * m[i] * m[i]) / (math.pi * math.pi * tv[i])) * math.log(
-                    (((a[i] * cd[i]) + ca[i]) / ca[i]) * (4 / math.pi)),
-                birla=current_user
-            )
-            db.session.add(birla)
-        db.session.commit()
-    except Exception as e:
-        return False
-    return True
+class BirlaForm(FlaskForm):
+    Aquifer_thickness = FloatField('Aquifer Thickness', validators=[InputRequired()])
+    Vertical_Transverse_Dispersivity = FloatField('Vertical Transverse Dispersivity', validators=[InputRequired()])
+    Stoichiometry_coefficient = FloatField('Stoichiometry coefficient', validators=[InputRequired()])
+    Contaminant_Concentration = FloatField('Contaminant Concentration', validators=[InputRequired()])
+    Reactant_Concentration = FloatField('Reactant Concentration', validators=[InputRequired()])
+    Recharge_Rate = FloatField('Recharge Rate', validators=[InputRequired()])
+    submit = SubmitField('Generate Graph')
+
+
+class MaierGrathwohlForm(FlaskForm):
+    Aquifer_thickness = FloatField('Aquifer Thickness', validators=[InputRequired()])
+    Vertical_Transverse_Dispersivity = FloatField('Vertical Transverse Dispersivity', validators=[InputRequired()])
+    Stoichiometry_coefficient = FloatField('Stoichiometry coefficient', validators=[InputRequired()])
+    Contaminant_Concentration = FloatField('Contaminant Concentration', validators=[InputRequired()])
+    Reactant_Concentration = FloatField('Reactant Concentration', validators=[InputRequired()])
+    submit = SubmitField('Generate Graph')
+
+
+def less_than(FlaskForm, field):
+    if field.data >= 5:
+        raise ValidationError('Field must be less than 5')
+
+
+class NumericalForm(FlaskForm):
+    # Domain
+    Lx = FloatField('Length[m]', validators=[InputRequired(),
+                                             NumberRange(min=2500, max=5000,
+                                                         message='Please enter a value in '
+                                                                 'the range of 2500-5000(inclusive)')])
+    Ly = FloatField('Height[m]', validators=[InputRequired(), less_than])
+    ncol = IntegerField('Number of columns', validators=[InputRequired(), NumberRange(min=2, max=250,
+                                                                                      message='Please enter a value '
+                                                                                              'in the range '
+                                                                                              'of 2-250(inclusive)')])
+    nrow = IntegerField('Number of rows', validators=[InputRequired(), NumberRange(min=2, max=250,
+                                                                                   message='Please enter a '
+                                                                                           'value in the range'
+                                                                                           ' of 2-250(inclusive)')])
+    # Parameters
+    prsity = FloatField('Porosity',
+                        validators=[InputRequired(),
+                                    NumberRange(
+                                        min=0, max=1,
+                                        message='Please enter a value in the range of 0-1(inclusive)')])
+    al = FloatField('Longitudinal Dispersivity[m]', validators=[InputRequired(),
+                                                                NumberRange(
+                                                                    min=1, max=10,
+                                                                    message='Please enter a '
+                                                                            'value in the range of 1-10(inclusive)')
+                                                                ])
+    trpt = FloatField('Transverse Vertical Dispersivity[m]', validators=[InputRequired(),
+                                                                         NumberRange(
+                                                                             min=0.01, max=0.1,
+                                                                             message='Please enter a '
+                                                                                     'value in the range '
+                                                                                     'of 0.01-0.1(inclusive)')
+                                                                         ])
+    Gamma = FloatField('Stoichiometric Ratio', validators=[InputRequired(),
+                                                           NumberRange(
+                                                               min=1,
+                                                               message='Please enter a '
+                                                                       'more than or equal to 1')
+                                                           ])
+
+    Cd = FloatField('Contaminant Concentration[mg/l]', validators=[InputRequired()])
+    Ca = FloatField('Partner Reactant Concentration[mg/l]', validators=[InputRequired()])
+    h1 = FloatField('Head inlet[m]', validators=[InputRequired()])
+    h2 = FloatField('Head outlet[m]', validators=[InputRequired()])
+    hk = FloatField('Conductivity[m/d]', validators=[InputRequired(),
+                                                     NumberRange(
+                                                         min=8.64*pow(10, -5), max=864,
+                                                         message='Please enter a '
+                                                                 'value in the range of 8.64E-5 - 864(inclusive)')
+                                                     ])
+    submit = SubmitField('Run')

@@ -5,6 +5,9 @@ import shutil
 
 import matplotlib
 import pandas as pd
+import numpy as np
+import scipy as sp
+from scipy import special
 from flask import jsonify
 from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, current_user, logout_user, login_required
@@ -12,21 +15,23 @@ from flask_mail import Message
 
 from groundwater import app, db, bcrypt, mail
 from groundwater.NumericalModel.numericalModel import numerical_model
+from groundwater.bioScreenFormula import bio
 from groundwater.assignParameterValue import assign_parameter_value
-from groundwater.dataStorage import *
+from groundwater.dataStorage import user_database, data_liedl, data_chu, data_ham, data_Bio, data_birla, data_maiergrathwohl, \
+    data_liedl3d
 from groundwater.databasePlots import create_bargraph, create_histogram, create_boxplot
 from groundwater.dispersivity_graphs import dispersivity_graphs
 from groundwater.file_checkers import allowed_file, check_file_for_liedl_equation, check_file_for_chu_equation, \
     check_file_for_ham_equation, check_file_for_liedl3d_equation, check_file_for_maier_and_grathwohl_equation, \
-    check_file_for_birla_equation, check_file_for_database
+    check_file_for_birla_equation, check_file_for_database, check_file_for_bio_equation
 from groundwater.form import RegistrationForm, LoginForm, UpdateAccountForm, LiedlForm, ChuForm, HamForm, Liedl3DForm, \
-    BirlaForm, MaierGrathwohlForm, UserDatabaseForm, NumericalForm, RequestResetForm, ResetPasswordForm
+    BirlaForm, MaierGrathwohlForm, UserDatabaseForm, NumericalForm, RequestResetForm, ResetPasswordForm, BioForm
 from groundwater.liedl3D import create_liedl3DPlot
-from groundwater.models import User, Liedl, Chu, Ham, Liedl3D, Birla, MaierGrathwohl, User_Database
-from groundwater.parameters import *
+from groundwater.models import User, Liedl, Chu, Ham, Liedl3D, Birla, MaierGrathwohl, User_Database, Bio
+from groundwater.parameters import Parameters
 from groundwater.scatterplot import create_scatterplot
 from groundwater.scatterplotAnalyticalModel import create_liedlPlotMultiple, create_chuEtAlPlotMultiple, \
-    create_HamPlotMultiple, create_Liedl3DMultiple
+    create_HamPlotMultiple, create_Liedl3DMultiple, create_BioPlotMultiple
 from groundwater.scatterplotSingleMode import create_singlePlot
 from groundwater.scatterplotsEmpiricalModel import create_MaierAndGrathwohlPlotMultiple, create_BirlaEtAlPlotMultiple
 
@@ -205,6 +210,7 @@ def database():
                                        user_database=current_user, Compound=request.form["compound"])
             db.session.add(user_entry)
             db.session.commit()
+            flash('Your entry has been added!', 'success')
             return redirect('/database')
     elif "upload" in request.form:
         if request.method == 'POST':
@@ -376,6 +382,7 @@ def liedlModelMultiple():
                       Reactant_Concentration=cd, Model_Plume_Length=lMax, liedl=current_user)
         db.session.add(liedl)
         db.session.commit()
+        flash('Your entry has been added!', 'success')
         return redirect('/liedlModelMultiple')
 
     elif request.method == "GET":
@@ -400,6 +407,8 @@ def liedlModelMultiple():
             db.session.commit()
             flash(f'Successfully deleted all data', category='success')
         return redirect('/liedlModelMultiple')
+    elif not form.validate_on_submit():
+        flash('Something went wrong with entering your data, please check form - your entries have not been erased', category='danger')
     para = create_liedlPlotMultiple(df['Site No.'].tolist(), table_data)
     x = df['Site Unit']
     y = df['Site No.']
@@ -458,7 +467,7 @@ def chuEtAlModelMultiple():
                   chu=current_user)
         db.session.add(chu)
         db.session.commit()
-        # flash('Your entry has been added!', 'success')
+        flash('Your entry has been added!', 'success')
         return redirect(url_for('chuEtAlModelMultiple'))
     elif request.method == "GET":
         try:
@@ -481,12 +490,119 @@ def chuEtAlModelMultiple():
             db.session.commit()
             flash(f'Successfully deleted all data', category='success')
             return redirect(url_for('chuEtAlModelMultiple'))
+    elif not form.validate_on_submit():
+        flash('Something went wrong with entering your data, please check form - your entries have not been erased', category='danger')
     para = create_chuEtAlPlotMultiple(df['Site No.'].tolist(), table_data)
     y = df['Site No.']
     x = df['Site Unit']
     return render_template('AnalyticalModel/chuEtAlModelMultiple.html', plot=para, siteData=zip(y, x),
                            form=form, table_data=table_data, column_names=Parameters.Chu_data_columns)
 
+@app.route('/documentationBio', methods=['GET', 'POST'])
+def documentationBio():
+    return render_template('AnalyticalModel/documentationBio.html')
+
+
+@app.route('/BioSingle', methods=['POST', 'GET'])
+def BioSingle():
+    Cthres = 5e-5  
+    time = 20  
+    H = 6.1  
+    c0 = 106.35
+    W = 20  
+    v = 292  
+    ax  = 10.7   
+    ay = 1.1 
+    az = 0.11  
+    Df  = 0 
+    R = 1  
+    gamma = 0  
+    lambda_eff = 4.45e-1 
+    numberOfGaussPoints = 60 
+    lMax = bio(Cthres,time,H,c0,W,v,ax,ay,az,Df,R,gamma,lambda_eff,numberOfGaussPoints)
+    year_histogram = create_singlePlot(lMax)
+    return render_template('AnalyticalModel/BioSingle.html', year_histogram=year_histogram)
+
+
+@app.route('/BioSinglePlot', methods=['POST'])
+def BioSinglePlot():
+    Cthres = float(request.form['Threshold_Concentration'])
+    time = float(request.form['Time'])
+    H = float(request.form['Top_Of_Source'])
+    c0 = float(request.form['Input_Concentration'])
+    W = float(request.form['Width'])
+    v = float(request.form['Velocity'])
+    ax = float(request.form['Longitudinal'])
+    ay = float(request.form['Horizontal'])
+    az = float(request.form['Vertical'])
+    Df = float(request.form['Diffusion'])
+    R = float(request.form['R'])
+    gamma = float(request.form['Ga'])
+    lambda_eff = float(request.form['La'])
+    numberOfGaussPoints = float(request.form['M'])
+    lMax = bio(Cthres,time,H,c0,W,v,ax,ay,az,Df,R,gamma,lambda_eff,numberOfGaussPoints)
+    year_histogram = create_singlePlot(lMax)
+    return jsonify({'Result': lMax, 'data': render_template('graphSingleResult.html', year_histogram=year_histogram)})
+
+
+@app.route('/BioMultiple', methods=['POST', 'GET'])
+def BioMultiple():
+    form = BioForm()
+    table_data = data_Bio(current_user.id)
+    if form.validate_on_submit():
+        Cthres = form.Threshold_Concentration.data
+        time = form.Time.data
+        H = form.Top_Source_Location.data
+        c0 = form.Input_Concentration.data
+        W = form.Source_Width.data
+        v = form.Average_Linear_Groundwater_Velocity.data
+        ax = form.Longitudinal_Dispersivity.data
+        ay = form.Horizontal_Transverse_Dispersivity.data
+        az = form.Vertical_Transverse_Dispersivity.data
+        Df = form.Effective_Diffusion_Coefficient.data
+        R = form.R.data
+        gamma = form.Ga.data
+        lambda_eff = form.La.data
+        numberOfGaussPoints = form.M.data
+        lMax = bio(Cthres,time,H,c0,W,v,ax,ay,az,Df,R,gamma,lambda_eff,numberOfGaussPoints)
+        bio_screen = Bio(Threshold_Concentration=Cthres, Time=time, Top_Source_Location=H,
+                  Input_Concentration=c0, Source_Width=W, Average_Linear_Groundwater_Velocity=v,
+                  Longitudinal_Dispersivity=ax, Horizontal_Transverse_Dispersivity=ay,
+                  Vertical_Transverse_Dispersivity=az, Effective_Diffusion_Coefficient=Df, R=R, Ga=gamma, La=lambda_eff, M=numberOfGaussPoints,
+                  Model_Plume_Length=lMax, bio=current_user)
+
+        db.session.add(bio_screen)
+        db.session.commit()
+        flash('Your entry has been added!', 'success')
+        return redirect(url_for('BioMultiple'))
+    elif request.method == "GET":
+        try:
+            siteUnit = json.loads(request.args['siteUnits'])
+            if len(siteUnit) is 0:
+                siteUnit = df['Site No.'].tolist()
+
+            siteUnit = [int(x) for x in siteUnit]
+            para = create_BioPlotMultiple(siteUnit, table_data)
+            return para
+        except Exception as e:
+            pass
+    elif "upload" in request.form:
+        if request.method == 'POST':
+            allowed_file(check_file_for_bio_equation, current_user, Bio, db)
+        return redirect(url_for('BioMultiple'))
+    elif "delete" in request.form:
+        if request.method == 'POST':
+            Bio.query.filter_by(user_id=current_user.id).delete()
+            db.session.commit()
+            flash(f'Successfully deleted all data', category='success')
+            return redirect(url_for('BioMultiple'))
+    elif not form.validate_on_submit():
+        flash('Something went wrong with entering your data, please check form - your entries have not been erased', category='danger')
+    para = create_BioPlotMultiple(df['Site No.'].tolist(), table_data)
+    y = df['Site No.']
+    x = df['Site Unit']
+    return render_template('AnalyticalModel/BioMultiple.html', plot=para, siteData=zip(y, x),form=form,
+                           table_data=table_data, column_names=Parameters.Bio_data_columns)
 
 @app.route('/documentationHam', methods=['GET', 'POST'])
 def documentationHam():
@@ -499,7 +615,8 @@ def hamModelSingle():
     Ath = 0.01
     Ca = 8
     Cd = 5
-    lMax = ((Q * Q) / (4 * math.pi * Ath)) * ((Cd / Ca) ** 2)
+    a = 3.5
+    lMax = ((Q * Q) / (4 * math.pi * Ath)) * (((a*Cd) / Ca) ** 2)
     lMax = "%.2f" % lMax
     year_histogram = create_singlePlot(lMax)
     return render_template('AnalyticalModel/hamModelSingle.html', year_histogram=year_histogram)
@@ -548,6 +665,7 @@ def hamModelMultiple():
                   ham=current_user)
         db.session.add(ham)
         db.session.commit()
+        flash('Your entry has been added!', 'success')
         return redirect('/hamModelMultiple')
 
     elif request.method == "GET":
@@ -572,11 +690,14 @@ def hamModelMultiple():
             db.session.commit()
             flash(f'Successfully deleted all data', category='success')
             return redirect('/hamModelMultiple')
+    elif not form.validate_on_submit():
+        flash('Something went wrong with entering your data, please check form - your entries have not been erased', category='danger')
     para = create_HamPlotMultiple(df['Site No.'].tolist(), table_data)
     x = df['Site Unit']
     y = df['Site No.']
     return render_template('AnalyticalModel/hamModelMultiple.html', plot=para, siteData=zip(y, x),
                            form=form, table_data=table_data, column_names=Parameters.Ham_data_columns)
+
 
 
 @app.route('/documentation3DLiedl', methods=['GET', 'POST'])
@@ -639,6 +760,7 @@ def liedl3DModelMultiple():
                           liedl3d=current_user)
         db.session.add(liedl3d)
         db.session.commit()
+        flash('Your entry has been added!', 'success')
         return redirect('/liedl3DModelMultiple')
 
     elif request.method == "GET":
@@ -652,6 +774,7 @@ def liedl3DModelMultiple():
             para = create_Liedl3DMultiple(siteUnit, table_data)
             return para
         except Exception as e:
+            print(e)
             pass
     elif "upload" in request.form:
         if request.method == 'POST':
@@ -663,6 +786,8 @@ def liedl3DModelMultiple():
             db.session.commit()
             flash(f'Successfully deleted all data', category='success')
             return redirect('/liedl3DModelMultiple')
+    elif not form.validate_on_submit():
+        flash('Something went wrong with entering your data, please check form - your entries have not been erased', category='danger')
     para = create_Liedl3DMultiple(df['Site No.'].tolist(), table_data)
     y = df['Site No.']
     x = df['Site Unit']
@@ -724,6 +849,7 @@ def MaierAndGrathwohlModelMultiple():
                                maiergrathwohl=current_user)
         db.session.add(maier)
         db.session.commit()
+        flash('Your entry has been added!', 'success')
         return redirect('/MaierAndGrathwohlModelMultiple')
     elif request.method == "GET":
         try:
@@ -748,6 +874,8 @@ def MaierAndGrathwohlModelMultiple():
             db.session.commit()
             flash(f'Successfully deleted all data', category='success')
             return redirect('/MaierAndGrathwohlModelMultiple')
+    elif not form.validate_on_submit():
+        flash('Something went wrong with entering your data, please check form - your entries have not been erased', category='danger')
     para = create_MaierAndGrathwohlPlotMultiple(df['Site No.'].tolist(), table_data)
     y = df['Site No.']
     x = df['Site Unit']
@@ -809,6 +937,7 @@ def BirlaEtAlModelMultiple():
                       Model_Plume_Length=lMax, birla=current_user)
         db.session.add(birla)
         db.session.commit()
+        flash('Your entry has been added!', 'success')
         return redirect('/BirlaEtAlModelMultiple')
     elif request.method == "GET":
         try:
@@ -832,6 +961,8 @@ def BirlaEtAlModelMultiple():
             db.session.commit()
             flash(f'Successfully deleted all data', category='success')
             return redirect('/BirlaEtAlModelMultiple')
+    elif not form.validate_on_submit():
+        flash('Something went wrong with entering your data, please check form - your entries have not been erased', category='danger')
     para = create_BirlaEtAlPlotMultiple(df['Site No.'].tolist(), table_data)
     y = df['Site No.']
     x = df['Site Unit']
@@ -859,7 +990,8 @@ def numericalModel():
         h2 = form.h2.data
         hk = form.hk.data
         id = str(current_user.id)
-        parent_dir = 'your_directory'
+        # Replace this path with your path
+        parent_dir = 'C:\\Users\\Vedaanti Baliga\\Desktop\\Personal-code\\CAST'
         path = os.path.join(parent_dir, id)
         if not (h1 > h2):
             flash(
@@ -873,6 +1005,7 @@ def numericalModel():
                 bool = True
                 string = 'Maximum Plume Length(LMax): ' + str(lMax)
                 flash(string, 'success')
+                shutil.rmtree(path)
                 return render_template('NumericalModel/numericalNew.html', form=form, bool=bool, plot_url=plot_url)
             except Exception as e:
                 flash('No contour levels were found within the data range', 'danger')
