@@ -1,0 +1,12 @@
+{% extends 'baseLayoutDocumentation.html' %}
+{% block title %}Numerical Model{% endblock %}
+{% block content %}
+<h2 id="numerical-model---2d-reactive-transport-model-using-modflow-and-mt3dms">Numerical Model - 2D reactive transport model using MODFLOW and MT3DMS</h2>
+<p>The numerical model in the CAST is based on the conceptual work presented in Yadav et al. (2014). The 2D numerical domain is vertically orineted and follows the assumptions similar to that provided in Liedl et al., (2005,), e.g., homogeneous, isotropic, steady-state and bi-component (Electron Donor or contaminant concentation <span class="math inline">\(C_{ED}\)</span> and Electron Acceptor or the partner reactant concentration <span class="math inline">\(C_{EA}\)</span> ) instantaneous reaction (see Liedl et al., 2005 Analytical Model of the CAST).</p>
+<p><br></p>
+<p><img src="static/num_model.png" alt="numerical model- yadav et al. 2014" width="400" height="200"></p>
+<p><br></p>
+<p>MODFLOW and MT3DMS are used in the simulation, which provides contour of a transformed concentration, <span class="math inline">\(C(x, z)\)</span>. The transformed concentration, based on Yadav et al. (2014), enables simulation of reactive system (<span class="math inline">\(C_{ED}\)</span> and <span class="math inline">\(C_{EA}\)</span>) as a conservative system. The maximum plume length (<span class="math inline">\(L_{max}\)</span>) is then the distance between the source (the left edge of the domain) and the largest distance of the chosen threshold concentration (e.g., <span class="math inline">\(C=0\)</span>) along <span class="math inline">\(x-\)</span>axis.</p>
+<h3 id="references">References</h3>
+<p>Yadav, P. K., Liedl, R., &amp; Dietrich, P. (2014). Influence of source thickness on steady-state plume length. Environ. Earth Sci., 71(2), 959-964. <a href="https://doi.org/10/f5qfwm28">https://doi.org/10/f5qfwm28</a></p>
+{% endblock %}
