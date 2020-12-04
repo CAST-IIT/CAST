@@ -423,11 +423,11 @@ def documentationChu():
 
 @app.route('/chuEtAlSingle', methods=['POST', 'GET'])
 def chuEtAlSingle():
-    W = 10
+    W = 2
     Th = 0.01
     Ca = 8
     Cd = 5
-    g = 3.5
+    g = 1.5
     e = 0
     lMax = ((math.pi * W * W) / (16 * Th)) * (((g * Cd) / (Ca - e)) ** 2)
     lMax = "%.2f" % lMax
@@ -795,8 +795,8 @@ def documentationMaierAndGrathwohl():
 
 @app.route('/MaierAndGrathwohlSingle', methods=['POST', 'GET'])
 def MaierAndGrathwohlSingle():
-    M = 2
-    tv = 0.001
+    M = 5
+    tv = 0.01
     g = 3.5
     Ca = 8
     Cd = 5
@@ -955,6 +955,11 @@ def BirlaEtAlModelMultiple():
     x = df['Site Unit']
     return render_template('EmpiricalModel/BirlaEtAlModelMultiple.html', plot=para, siteData=zip(y, x),
                            form=form, table_data=table_data, column_names=Parameters.Birla_data_columns)
+
+
+@app.route('/documentationNumerical', methods=['GET', 'POST'])
+def documentationNumerical():
+    return render_template('NumericalModel/documentationNumerical.html')
 
 
 @app.route('/numericalModel', methods=['POST', 'GET'])
