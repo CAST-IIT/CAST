@@ -21,12 +21,12 @@
                 <form class="form-inline" action="/random-name/" method="POST">
                     <div class="form-group">
                         1.Thickness (M) :<label class="sr-only">Thickness</label>
-                        <input value="2" type="number" class="form-control" id="Thickness" name="Thickness" placeholder="M" required min=0 step="any">
+                        <input type="number" value="2" class="form-control" id="Thickness" name="Thickness" placeholder="M" required min="0.1" max="6.1" step="0.001">
                     </div>
                     <br><br>
                     <div class="form-group">
                         2.Dispersivity (TV) :<label class="sr-only">Dispersivity</label>
-                        <input type="number" class="form-control" id="Dispersivity" name="Dispersivity" placeholder="TV" required min=0 step="any" value="0.001">
+                        <input type="number" class="form-control" id="Dispersivity" name="Dispersivity" placeholder="TV" required min="0.0001" max="0.01" step="0.0001" value="0.001">
                     </div>
                     <br><br>
                     <div class="form-group">
@@ -53,12 +53,12 @@
                 <div class="grid-container">
                     <div id="sliderThickness" class="slidecontainer" style="display: none">
                     <label> Thickness </label>
-                    <input type="range" min="0.1" max="6.1" value="3.1" step="0.3" class="slider" id='scatterplot_fits'>
+                    <input type="range" min="0.1" max="6.1" step="0.001" class="slider" id='scatterplot_fits'>
                     <p>Value: <span id="thicknessVal"></span></p>
                 </div>
                 <div id="sliderDispersivity" class="slidecontainer" style="display: none">
                     <label>Dispersivity </label>
-                    <input type="range" min="0.0001" max="0.01" value="0.005" step="0.0001" class="slider" id='parameters'>
+                    <input type="range" min="0.0001" max="0.01" step="0.0001" class="slider" id='parameters'>
                     <p>Value: <span id="dispersivityVal"></span></p>
                 </div>
                 </div>

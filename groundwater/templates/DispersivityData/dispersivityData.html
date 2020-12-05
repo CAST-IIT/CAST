@@ -120,7 +120,16 @@
             </div>
         </div>
         </li>
-        <li><a href="{{ url_for('numericalModel')}}">Numerical Model</a></li>
+        <li><div class="dropdownNew">
+            <button class="dropbtnNew">Numerical Model
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-contentNew">
+              <a href="{{ url_for('documentationNumerical')}}">Model Description</a>
+              <a href="{{ url_for('numericalModel')}}">Single Computing Simulation</a>
+            </div>
+        </div>
+        </li>
         <li><a class="pull-right" href="{{ url_for('logout')}}">Logout</a></li>
     </ul>
   </nav>
@@ -146,7 +155,9 @@
                 <div class="chart" id="boxplot">
                     <img src="static/DispersivityPlots/box.png">
                 </div>
-                <div class="chart" id="scatter">
+      </div>
+      <div class="grid-container">
+                <div class="chart" id="scatter" style="margin-left: 400px;">
                     <img src="static/DispersivityPlots/scatter.png">
                 </div>
         </div>

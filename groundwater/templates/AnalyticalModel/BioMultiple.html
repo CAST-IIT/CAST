@@ -1,0 +1,287 @@
+{% extends 'baseLayoutMultiplePlots.html' %}
+{% block title %}Bioscreen{% endblock %}
+{% block li %}
+<div class="dropdownNew">
+            <button class="dropbtnNew">BIOSCREEN-AT
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-contentNew">
+                <a href="{{ url_for('documentationBio')}}">Model Description</a>
+                <a href="{{ url_for('BioSingle')}}">Single Computing Simulation</a>
+            </div>
+</div>
+{% endblock %}
+<div class="row">
+    {% block h2 %}Bioscreen{% endblock %}
+    {% block img %}<img src="static/bio.png" width="300">{% endblock %}
+    {% block href%}<a href="static/bio.csv" download><button type="button" class="btn btn-light">Download Sample File</button></a>{%endblock%}
+            {% block content %}
+    {% block body %}
+    <div class="container-fluid">
+                <table class="table content-section display" id="data-table">
+                    <thead class="thead-light">
+                    <tr>
+                        {% for name in column_names %}
+                            <th scope="col">{{ name }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for data in table_data %}
+                        <tr id="{{ data[0] }}_table">
+                            {% for value in data %}
+                                <td>{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+        <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Please Insert Data</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="">
+                {{form.hidden_tag()}}
+                <fieldset class="form-group">
+                    <div class="form-group">
+                        {{form.Threshold_Concentration.label(class="form-control-label")}}
+                        {% if form.Threshold_Concentration.errors %}
+                                {{form.Threshold_Concentration(class="form-control form-control-lg is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.Threshold_Concentration.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor%}
+                                </div>
+                            {% else %}
+                                {{form.Threshold_Concentration(class="form-control form-control-lg")}}
+                            {% endif%}
+                    </div>
+                    <div class="form-group">
+                        {{form.Time.label(class="form-control-label")}}
+                        {% if form.Time.errors %}
+                                {{form.Time(class="form-control form-control-lg is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.Time.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor%}
+                                </div>
+                            {% else %}
+                                {{form.Time(class="form-control form-control-lg")}}
+                            {% endif%}
+                    </div>
+                    <div class="form-group">
+                        {{form.Top_Source_Location.label(class="form-control-label")}}
+                        {% if form.Top_Source_Location.errors %}
+                                {{form.Top_Source_Location(class="form-control form-control-lg is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.Top_Source_Location.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor%}
+                                </div>
+                            {% else %}
+                                {{form.Top_Source_Location(class="form-control form-control-lg")}}
+                            {% endif%}
+                    </div>
+                    <div class="form-group">
+                        {{form.Input_Concentration.label(class="form-control-label")}}
+                        {% if form.Input_Concentration.errors %}
+                                {{form.Input_Concentration(class="form-control form-control-lg is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.Input_Concentration.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor%}
+                                </div>
+                            {% else %}
+                                {{form.Input_Concentration(class="form-control form-control-lg")}}
+                            {% endif%}
+                    </div>
+                    <div class="form-group">
+                        {{form.Source_Width.label(class="form-control-label")}}
+                        {% if form.Source_Width.errors %}
+                                {{form.Source_Width(class="form-control form-control-lg is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.Source_Width.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor%}
+                                </div>
+                            {% else %}
+                                {{form.Source_Width(class="form-control form-control-lg")}}
+                            {% endif%}
+                    </div>
+                    <div class="form-group">
+                        {{form.Average_Linear_Groundwater_Velocity.label(class="form-control-label")}}
+                        {% if form.Average_Linear_Groundwater_Velocity.errors %}
+                                {{form.Average_Linear_Groundwater_Velocity(class="form-control form-control-lg is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.Average_Linear_Groundwater_Velocity.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor%}
+                                </div>
+                            {% else %}
+                                {{form.Average_Linear_Groundwater_Velocity(class="form-control form-control-lg")}}
+                            {% endif%}
+                    </div>
+                    <div class="form-group">
+                        {{form.Longitudinal_Dispersivity.label(class="form-control-label")}}
+                        {% if form.Longitudinal_Dispersivity.errors %}
+                                {{form.Longitudinal_Dispersivity(class="form-control form-control-lg is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.Longitudinal_Dispersivity.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor%}
+                                </div>
+                            {% else %}
+                                {{form.Longitudinal_Dispersivity(class="form-control form-control-lg")}}
+                            {% endif%}
+                    </div>
+
+                    <div class="form-group">
+                        {{form.Horizontal_Transverse_Dispersivity.label(class="form-control-label")}}
+                        {% if form.Horizontal_Transverse_Dispersivity.errors %}
+                                {{form.Horizontal_Transverse_Dispersivity(class="form-control form-control-lg is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.Horizontal_Transverse_Dispersivity.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor%}
+                                </div>
+                            {% else %}
+                                {{form.Horizontal_Transverse_Dispersivity(class="form-control form-control-lg")}}
+                            {% endif%}
+                    </div>
+                     <div class="form-group">
+                        {{form.Vertical_Transverse_Dispersivity.label(class="form-control-label")}}
+                        {% if form.Vertical_Transverse_Dispersivity.errors %}
+                                {{form.Vertical_Transverse_Dispersivity(class="form-control form-control-lg is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.Vertical_Transverse_Dispersivity.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor%}
+                                </div>
+                            {% else %}
+                                {{form.Vertical_Transverse_Dispersivity(class="form-control form-control-lg")}}
+                            {% endif%}
+                    </div>
+                    <div class="form-group">
+                        {{form.Effective_Diffusion_Coefficient.label(class="form-control-label")}}
+                        {% if form.Effective_Diffusion_Coefficient.errors %}
+                                {{form.Effective_Diffusion_Coefficient(class="form-control form-control-lg is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.Effective_Diffusion_Coefficient.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor%}
+                                </div>
+                            {% else %}
+                                {{form.Effective_Diffusion_Coefficient(class="form-control form-control-lg")}}
+                            {% endif%}
+                    </div>
+                    <div class="form-group">
+                        {{form.R.label(class="form-control-label")}}
+                        {% if form.R.errors %}
+                                {{form.R(class="form-control form-control-lg is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.R.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor%}
+                                </div>
+                            {% else %}
+                                {{form.R(class="form-control form-control-lg")}}
+                            {% endif%}
+                    </div>
+                     <div class="form-group">
+                        {{form.Ga.label(class="form-control-label")}}
+                        {% if form.Ga.errors %}
+                                {{form.Ga(class="form-control form-control-lg is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.Ga.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor%}
+                                </div>
+                            {% else %}
+                                {{form.Ga(class="form-control form-control-lg")}}
+                            {% endif%}
+                    </div>
+                    <div class="form-group">
+                        {{form.La.label(class="form-control-label")}}
+                        {% if form.La.errors %}
+                                {{form.La(class="form-control form-control-lg is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.La.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor%}
+                                </div>
+                            {% else %}
+                                {{form.La(class="form-control form-control-lg")}}
+                            {% endif%}
+                    </div>
+                    <div class="form-group">
+                        {{form.M.label(class="form-control-label")}}
+                        {% if form.M.errors %}
+                                {{form.M(class="form-control form-control-lg is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.M.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor%}
+                                </div>
+                            {% else %}
+                                {{form.M(class="form-control form-control-lg")}}
+                            {% endif%}
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    {{form.submit(class="btn btn-outline-info")}}
+                </div>
+            </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    {% endblock %}
+    {% endblock %}
+
+{% block script %}
+   function format_link(link){
+        if (link)
+          return "<a href='" + link + "' target='_blank'>" + link + "</a>";
+        else
+          return "";
+      }
+$(document).ready(function(){
+
+ $('#framework').multiselect({
+  nonSelectedText: 'All Sites',
+  enableFiltering: true,
+  enableCaseInsensitiveFiltering: true,
+  buttonWidth:'400px',
+  onChange: function(option, checked){
+    var _selectedOptions = $('#framework option:selected');
+    let selectedOptions = [];
+    for (let i = 0; i < _selectedOptions.length; ++i) {
+        selectedOptions.push(_selectedOptions[i].value);
+    }
+
+    // Send an AJAX request
+    $.ajax({
+        type: 'GET',
+        url: '/BioMultiple',
+        data: {
+            siteUnits: JSON.stringify(selectedOptions),
+        },
+        dataType: 'json',
+        success: function(data) {
+            console.log(data);
+            Plotly.newPlot('para', data);
+        }
+    });
+  }
+ });
+});
+{% endblock %}

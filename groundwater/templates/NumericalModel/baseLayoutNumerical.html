@@ -36,22 +36,21 @@
 
     <ul class="navbar-navNew">
       <li><a href="{{ url_for('index')}}">Home</a></li>
-        <li><a href="{{ url_for('database')}}">Database Management</a></li>
       <li><div class="dropdownNew">
-            <button class="dropbtnNew">Analysis Visualisation
-                <i class="fa fa-caret-down"></i>
-            </button>
-
-                <div class="dropdown-contentNew">
-                <a href="{{ url_for('allPlots')}}">All Plots</a>
-                <a href="{{ url_for('bargraph')}}">Bargraph</a>
-                <a href="{{ url_for('boxplot')}}">Boxplots</a>
-                <a href="{{ url_for('histogram')}}">Histograms</a>
-                <a href="{{ url_for('scatterplot')}}">Scatterplots</a>
-                <a href="{{ url_for('statistics')}}">Statistical Analysis</a>
-                </div>
+        <button class="dropbtnNew">Site Database
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-contentNew">
+            <a href="{{ url_for('database')}}">Database Management</a>
+            <a href="{{ url_for('allPlots')}}">All Plots</a>
+            <a href="{{ url_for('bargraph')}}">Bargraph</a>
+            <a href="{{ url_for('boxplot')}}">Boxplots</a>
+            <a href="{{ url_for('histogram')}}">Histograms</a>
+            <a href="{{ url_for('scatterplot')}}">Scatterplots</a>
+            <a href="{{ url_for('statistics')}}">Statistical Analysis</a>
         </div>
-        </li>
+    </div>
+    </li>
         <li><div class="dropdownNew">
             <button class="dropbtnNew">Analytical Models
                 <i class="fa fa-caret-down"></i>
@@ -76,6 +75,17 @@
             </div>
         </div>
         </li>
+        <li><div class="dropdownNew">
+          <button class="dropbtnNew">Numerical Model
+              <i class="fa fa-caret-down"></i>
+          </button>
+          <div class="dropdown-contentNew">
+            <a href="{{ url_for('documentationNumerical')}}">Model Description</a>
+            <a href="{{ url_for('numericalModel')}}">Single Computing Simulation</a>
+          </div>
+      </div>
+      </li>
+      </li>
         <li><a class="pull-right" href="{{ url_for('logout')}}">Logout</a></li>
     </ul>
   </nav>

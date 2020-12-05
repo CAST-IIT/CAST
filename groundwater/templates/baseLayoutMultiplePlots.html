@@ -65,6 +65,10 @@
           background-color: #993366;
           padding: 17px 10px;
         }
+	img{
+	  margin-top:15px;
+	  margin-bottom:15px;
+	}
     </style>
 </head>
 <body>
@@ -106,6 +110,8 @@
                 <a href="{{ url_for('documentationChu')}}">Chu et al.(2004)</a>
                 <a href="{{ url_for('documentationHam')}}">Ham et al.(2004)</a>
                 <a href="{{ url_for('documentation3DLiedl')}}">Liedl et al.(2011)</a>
+                <a href="{{ url_for('documentationBio')}}">BIOSCREEN-AT</a>
+
             </div>
         </div>
         </li>
@@ -117,12 +123,21 @@
             <div class="dropdown-contentNew">
                 <a href="{{ url_for('empiricalModel')}}">All Models</a>
                 <a href="{{ url_for('documentationMaierAndGrathwohl')}}">Maier and Grathwohl(2005)</a>
-                <a href="{{ url_for('documentationBirlaEtAl')}}">Birla et al.(2019)</a>
+                <a href="{{ url_for('documentationBirlaEtAl')}}">Birla et al.(2020)</a>
             </div>
         </div>
         </li>
         <li>{% block liEmpirical %}{% endblock %}</li>
-        <li><a href="{{ url_for('numericalModel')}}">Numerical Model</a></li>
+        <li><div class="dropdownNew">
+          <button class="dropbtnNew">Numerical Model
+              <i class="fa fa-caret-down"></i>
+          </button>
+          <div class="dropdown-contentNew">
+            <a href="{{ url_for('documentationNumerical')}}">Model Description</a>
+            <a href="{{ url_for('numericalModel')}}">Single Computing Simulation</a>
+          </div>
+      </div>
+      </li>
         <li><a class="pull-right" href="{{ url_for('logout')}}">Logout</a></li>
     </ul>
 </nav>
@@ -176,7 +191,7 @@
           <form method="post" enctype="multipart/form-data" class="dropzone-box">
                   <input name="file" type="file" class="btn btn-light btn-lg"/>
                   <button type="submit" name="upload" id="upload" class="btn btn-light">Upload</button>
-                <button type="submit" name="delete" id="delete" class="btn btn-light">Clear All</button>
+                <button type="submit" name="delete" id="delete" class="btn btn-light">Delete table data</button>
               <button type="button" class="btn btn-light" id="add" data-toggle="modal" data-target="#myModal">Add Data
         </button>
                 </form>

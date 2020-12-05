@@ -58,6 +58,29 @@ def data_chu(user_id):
         ])
     return table_data
 
+def data_Bio(user_id):
+    bio = Bio.query.filter_by(user_id=user_id).all()
+    table_data = []
+    for data in bio:
+        table_data.append([
+            data.id,
+            data.Threshold_Concentration,
+            data.Time,
+            data.Top_Source_Location,
+            data.Input_Concentration,
+            data.Source_Width,
+            data.Average_Linear_Groundwater_Velocity,
+            data.Longitudinal_Dispersivity,
+            data.Horizontal_Transverse_Dispersivity,
+            data.Vertical_Transverse_Dispersivity,
+            data.Effective_Diffusion_Coefficient,
+            data.R,
+            data.Ga,
+            data.La,
+            data.M,
+            data.Model_Plume_Length
+        ])
+    return table_data
 
 def data_ham(user_id):
     ham = Ham.query.filter_by(user_id=user_id).all()
