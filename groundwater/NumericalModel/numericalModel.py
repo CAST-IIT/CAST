@@ -39,8 +39,8 @@ def numerical_model(Lx, Ly, ncol, nrow, prsity, al, av, Gamma, Cd, Ca, h1, h2, h
     perlen = 6000
     # Exe
     # Replace this path with your path
-    exe_name_mf = copy('C:\\Users\\Vedaanti Baliga\\Desktop\\Personal-code\\CAST\\mf2005.exe', path)
-    exe_name_mt = copy('C:\\Users\\Vedaanti Baliga\\Desktop\\Personal-code\\CAST\\mt3dms.exe', path)
+    exe_name_mf = copy('/home/vedaanti/Water/mf2005', path)
+    exe_name_mt = copy('/home/vedaanti/Water/mt3dms', path)
 
     # Flow Calculation
     t0_mf = 'T02_mf' + id
