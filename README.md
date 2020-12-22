@@ -102,24 +102,34 @@ Coming soon ...,
 
 **Screenshots of the web-based interface :**
 
- <img src="readme_images/Screenshot 2020-02-21 22.44.06.png" width="1000">
+ <img src="readme_images/MainPage.png" width="1000">
  > Main computing page (Toolbox)
 
 
- <img src="readme_images/Screenshot 2020-02-21 22.46.58.png" width="1000">
+ <img src="readme_images/DataBase.png" width="1000">
  > Database management
 
- <img src="readme_images/Screenshot 2020-02-25 12.52.22.png" width="1000">
+
+ <img src="readme_images/SingleComputation.png" width="1000">
  > Single computing interface
 
 
- <img src="readme_images/Screenshot 2020-02-21 22.47.09.png" width="1000">
+<img src="readme_images/MultipleComputation.png" width="1000">
+ > Multiple computing interface
+
+
+ <img src="readme_images/AllPlots.png" width="1000">
  > Data visualisation
 
- <img src="readme_images/Screenshot 2020-02-21 22.49.16.png" width="1000">
 
- <img src="readme_images/Screenshot 2020-02-25 12.45.00.png" width="1000">
+ <img src="readme_images/NumericalModel.png" width="1000">
+
+ <img src="readme_images/Numericalresults.png" width="1000">
  > Numerical Model
+
+
+ <img src="readme_images/AnalyticalModels.png" width="1000">
+ > Display of all Analytical Models
 
 
 ### More to be continued...  ###
