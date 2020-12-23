@@ -120,7 +120,7 @@ Coming soon ...,
  > Multiple computing interface
 
 
- <img src="readme_images/AllPlots.png" width="1000">
+ <img src="readme_images/AllPlotsDb.png" width="1000">
  > Data visualisation
 
 
