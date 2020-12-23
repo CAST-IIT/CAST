@@ -18,30 +18,32 @@ _Authors and organizations credited on this page or on the above-mentioned websi
 [Flask](https://palletsprojects.com/p/flask/) micro web-framework is used for the web-application development. The front end has been designed using HTML, CSS and bootstrap, the back-end is being handled by the open source management system, MySQL and Python(3.6.8). The application currently can already be used for:
 
 
-1. **Statistical Analysis of Contaminated sites:**
-   * Large contaminated site database
-   * Statistical measures and visualizations of important site quantities
+### 1. Statistical Analysis of Contaminated sites: ###
+
++ Large contaminated site database (100+ sites)
++ Statistical measures and visualizations of important site quantities
+
+### 2. Analytical Models for steady-state plume length $(L_{max})$ estimations: ###
+
++ 2D Vertical Model (Liedl et al., 2005)
++ 2D Horizontal Model (Ham et al. 2005, Chu et al., 2005)
++ 3D Model (Liedl et al., 2011)
++ 3D Model (BIOSCREEN-AT, Karanovic et al., 2007)
+
+### 3.Empirical Models for $L_{max}$ estimations: ###
+
++ 2D Vertical (Maier and Grathwohl, 2005)
++ 2D Vertical with richarge (Birla et al. 2020)
 
 
-2. **Analytical Models for steady-state plume length $(L_{max})$ estimations:**
-    * 2D Vertical Model (Liedl et al., 2005)
-    * 2D Horizontal Model (Ham et al. 2005, Chu et al., 2005)
-    * 3D Model (Liedl et al., 2011)
-    * More to be added ...,
+### 4.Numerical Models for plume length estimations: ###
 
++ Web-interface for MODFLOW/MT3DMS
+Single reactant reactive transport model based on Yadav et al., 2014).
 
-3. **Empirical Models for $L_{max}$ estimations:**
-   * 2D Vertical (Maier and Grathwohl, 2005)
-   * 2D Vertical with richarge (Birla et al. 2019 - in revision)
-   * More to be added ...,
+### 5.Decision model for selection of model for site-assessment (not implemented) ###
 
-4. **Numerical Models for plume length estimations:**
-    * Web-interface for MODFLOW/MT3DMS
-    * Single reactant reactive transport model based on Yadav et al., 2013.
-    * More in the development ...,
-
-5.  **Decision model for selection of model for site-assessment**
-    * Based on Yadav et al., 2020 (in revision)
+Based on Yadav et al., 2021 (in preparation)
 
 The codes on this site are licensed under Creative Commons CC BY-SA 4.0. Please check license.md for license wordings.  
 <img src="readme_images/cc.png" alt="Smiley face"  width="100">
