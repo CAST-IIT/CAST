@@ -99,7 +99,6 @@ def numerical_model(Lx, Ly, ncol, nrow, prsity, al, av, Gamma, Cd, Ca, h1, h2, h
     conc = conc[0, 0, :]
     cs = mm.contour_array(conc, levels=[C0], colors=['k'])
     mm.plot_ibound()
-    # plt.clabel(cs)
     plt.xlabel('Distance Lx [m]')
     plt.ylabel('Aquifer Thickness [m]')
     plt.title('Contaminant Plume')

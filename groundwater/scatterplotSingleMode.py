@@ -1,16 +1,45 @@
 import json
 import plotly
+import random
 
 import pandas as pd
 import plotly.graph_objs as go
 
+from flask_login import current_user
+from groundwater.dataStorage import user_database
+
+df = pd.read_csv('groundwater/static/original.csv')
+limit = df['Site No.'].size + 1
+
+def generate_site_numbers(no_of_data):
+    user_site_no = []
+    for x in range(no_of_data):
+        r = random.randint(1, limit)
+        if r not in user_site_no:
+            user_site_no.append(r)
+    return user_site_no
 
 def create_singlePlot(lMax):
-    df = pd.read_csv('groundwater/static/original.csv')
+    table_data = user_database(current_user.id)
+    for col in df.columns:
+            if df[col].dtype == 'float64':
+                df[col] = df[col].round(4)
+    plume_length = [item[4] for item in table_data]
+    user_site_no = generate_site_numbers(len(plume_length))
+    compound_names = [item[2] for item in table_data]
+    chem_group_name = [item[13] for item in table_data]
+    for (i,j) in zip(compound_names,chem_group_name):
+        similar_data = df[(df['Compound'].str.lower() == i.lower()) & (df['Chem. Group'].str.lower()==j.lower())]
+    if not compound_names:
+        similar_data = []
+        user_site_no_similar_data = []
+    else:
+        similar_data = similar_data['Plume length[m]'].to_numpy()
+        user_site_no_similar_data = generate_site_numbers(len(similar_data))
     trace1 = go.Scatter(
         x=[df['Site No.'].size / 2],
         y=[lMax],
-        name='User Plume Length(LMax)',
+        name='Model Lmax',
         mode='markers',
         marker=dict(
             size=14,
@@ -27,7 +56,17 @@ def create_singlePlot(lMax):
             color='#ffa600'
         )
     )
-    data = [trace1, trace2]
+    trace3 = go.Scatter(
+        x=user_site_no_similar_data,
+        y=similar_data,
+        mode='markers',
+        name='Similar sites in original database',
+        marker=dict(
+            size=14,
+            color='#FF6361'
+        )
+    )
+    data = [trace1, trace2,trace3]
     layout = go.Layout(
         titlefont=dict(
             size=25

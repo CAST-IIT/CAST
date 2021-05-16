@@ -16,9 +16,14 @@
     <main role="main" class="container">
      <div class="row">
          <h2>Statistical Analysis</h2>
-         <h3>The statistics presented below are representing the site database parameters</h3>
+         <h3>The statistics presented below are representing the original site database parameters</h3>
                 {{data.to_html(classes="table table-striped table-hover table-responsive") | safe}}
      </div>
+     <div class="row">
+        <h2>Statistical Analysis for similar data</h2>
+        <h3>The statistics presented below are representing the site database parameters similar to that of the user's database</h3>
+               {{similar_data.to_html(classes="table table-striped table-hover table-responsive") | safe}}
+    </div>
     </main>
     {% endblock %}
 

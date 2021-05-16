@@ -27,8 +27,21 @@ def generate_site_numbers(no_of_data):
 def create_bargraph(table_data):
     # original = siteUnit[:112]
     # UserData = siteUnit[112:
+    for col in df.columns:
+            if df[col].dtype == 'float64':
+                df[col] = df[col].round(4)
     plume_length = [item[4] for item in table_data]
     user_site_no = generate_site_numbers(len(plume_length))
+    compound_names = [item[2] for item in table_data]
+    chem_group_name = [item[13] for item in table_data]
+    for (i,j) in zip(compound_names,chem_group_name):
+        similar_data = df[(df['Compound'].str.lower() == i.lower()) & (df['Chem. Group'].str.lower()==j.lower())]
+    if not compound_names:
+        similar_data = []
+        user_site_no_similar_data = []
+    else:
+        similar_data = similar_data['Plume length[m]'].to_numpy()
+        user_site_no_similar_data = generate_site_numbers(len(similar_data))
     siteNum = []
     siteVal = []
     # siteNumUser = []
@@ -57,7 +70,15 @@ def create_bargraph(table_data):
             color='#ffa600'
         )
     )
-    data = [bar1, bar2]
+    bar3 = go.Bar(
+        x=user_site_no_similar_data,
+        y=similar_data,
+        name='Similar Data',
+        marker=dict(
+            color='#FF6361'
+        )
+    )
+    data = [bar1, bar2,bar3]
 
     layout = go.Layout(
         titlefont=dict(

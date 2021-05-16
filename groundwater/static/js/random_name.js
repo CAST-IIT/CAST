@@ -11,7 +11,7 @@ function plotScatterData(thickness, dispersivity) {
             url: '/random-name/',
             type: "POST",
         success: function(resp,data){
-            $('#successAlert').text("Maximum Plume Length(LMax): "+resp.Result).show();
+            $('#successAlert').text("Maximum Plume Length(LMax): "+resp.Result+" m").show();
             $('div#response').html(resp.data);
         }
     });

@@ -2,11 +2,33 @@
 {% block title %}Development of Contaminated Plumes{% endblock %}
 {% block content %}
 <h1 id="development-of-contaminated-plumes">Development of Contaminated Plumes</h1>
-<p>The spread of contaminant as it enters the flowing groundwater results to the formation of contaminant plume. The dimensions of contaminant plume can be used as a indicator for contaminated site assessment. Of particular interest thus can be the length of contaminant plume, which is explained in the figure below.</p>
-<p><img src="static\plume1.png" alt="Contaminated site EU" style="zoom:80%;" /></p>
-<p>Several chemical reactions (or decay) occurs as contaminant is flown (extended) by the water from the source. Initially, as the <strong>extension&lt;&lt;decay</strong>, the plume grows and extends at the maximum speed. Subsequently, the extension slows down as the decay rate increases. With the source strength remaining intact, the maximum plume dimensions is reached when <strong>decay = extension</strong> or a steady-state condition. As source strength decreases, the plume shrinks and eventually is exhausted (the case: <strong>decay&gt;&gt;extension</strong>). Thus identification of steady-state and plume dimensions at that stage refers to worst-case scenario and these can be used as an indicator for the site assessment.</p>
-<p>When steady-state remains for longer durations, which is often the cases for persistent pollutants (such as NAPLs), use of steady-state models that provide estimate of maximum plume length (<span class="math inline">\(L_{max}\)</span>) can be used for site assessment.</p>
-<p>This site provide tools for site-assessment based on stead-state models.</p>
-<p><strong>Reference</strong>:</p>
+<p>The spread of contaminant as it enters the flowing groundwater results to the formation of contaminant plume. The dimensions of a contaminant plume can be used as an indicator for contaminated site assessment. Of particular interest thus can be the maximum length of contaminant plume, which is explained in the figure below.</p>
+<p style="text-align:center;">
+  <img src="static\plume1.png" alt="Contaminated site EU" style="zoom:80%;" class="center" />
+</p>
+<p>Several chemical reactions (or decay) occurs as contaminant is flown (extended) by the water from the source. Initially, as the 
+<strong>extension &lt;&lt; decay</strong>, the plume grows and extends at the <em>maximum speed</em>. Subsequently, the extension slows 
+down as the decay rate increases. With the source strength remaining intact, the maximum plume dimensions (e.g., maximum length $L_{max}$) 
+is reached when <strong>decay = extension</strong> or when the steady-state condition is reached. As source strength decreases, the plume 
+<em>shrinks</em>, and eventually is exhausted (the case: <strong>decay&gt;&gt;extension</strong>). Thus identification of steady-state 
+and plume dimensions at that stage refers to worst-case scenario and these can be used as an indicator for the site assessment.</p>
+<p>When steady-state remains for longer durations, which is often the cases for persistent pollutants (such as NAPLs), use of steady-state 
+models that provide estimate of maximum plume length ($L_{max}$) 
+        can be used for site assessment.</p>
+<h3 id="how-to-measure-l_max">How to measure $L_{max}$?</h3>
+<p>Field measurements are the ultimate way to obtain $L_{max}$. Field methods are often the last step. Mathematical models are often the first steps, which requires depending on the model-types different number of field parameters. These parameters have to be obtained from field measurements or estimations based on available information can be used for modeling works. When one considers the site as a <em>potentially contaminated one</em>, in such case very limited information are available. In such case systematic use of mathematical models can be useful. <strong>Systematic</strong> here refers to using simple models (e.g., 2D analytical models) initially and then sequentially increasing the complexity of model (e.g., 3D anlaytical models). Numerical models, which have been extensively used for site assessment, typically requires large number of site information. These type of models should be used when other model-types (analytical or empirical models) fails to provide satisfactory assessment.</p>
+<p>Considering large number of <em>potentially contaminated sites</em> that exist worldwide (see Prokop et al. (2000) for EU countries data), it is required that different modeling options as discussed be available to the decision maker. <strong>CAST</strong> is one such attempt. CAST provides (a limited number of) modeling options for site assessment. The model-types in CAST is called <strong>TOOLBOXES</strong>. In addition to the model-types, the site also provide sufficiently large (&gt;100) contaminated site data (mostly of <a href="https://en.wikipedia.org/wiki/Light_non-aqueous_phase_liquid">LNAPL</a> type contaminants). The models and data provided in CAST are from peer-reviewed documents. Putting all of these together, the toolboxes of CAST are:</p>
+<ul>
+<li>Data toolbox</li>
+<li>Analytical model toolbox</li>
+<li>Empirical model toolbox</li>
+<li>Numerical model toolbox</li>
+</ul>
+<p>The <strong>Data toolbox</strong> also provides limited visualization and data analysis options. More importantly data provided in the toolbox can be obtained in readily editable format (e.g., CSV, XLS). <strong>Analytical models toolbox</strong> provides six different models of different complexity (e.g., 2D versus 3D). Only two empirical models are part of <strong>Empirical model toolbox</strong>. Literature provides very limited such model types. Numerical model is definitely not considered the best option for the early assessment, which CAST targets, of <em>potentially contaminated sites</em>. A very simple numerical model based on MODFLOW/MT3DMS is part of the <strong>numerical model toolbox</strong> of CAST.</p>
+<p>Check the <a href="https://prabhasyadav.github.io/CASTbook/intro.html" target="_blank" rel='noopener noreferrer'><strong>CAST documentation</strong></a> for description on CAST toolboxes, models and the way to use them.</p>
+<p><strong>NOTE</strong><br>
+The authors/host of the sites in any way are not responsible for the results obtained using the tools or methods provided in the site.</p>
+<h3 id="reference">Reference</h3>
+<p>Prokop, G., Schamann, M., Edelgaard, I., Gentile, A., 2000. Management of contaminated sites in Western Europe, Report Nr. 13/1999, European Environment Agency, ISBN: 92-9167-228-9</p>
 <p>Rünger H and G. Teutsch, 2001. Literature study, Natural attenuation of organic pollutants in groundwater, Integrated Concept for Groundwater Remediation (INCORE) -Final Report, Contract No.: EVK1-CT-1999-00017, Center of Applied Geosciences, University of Tübingen.</p>
 {% endblock %}

@@ -4,6 +4,7 @@
     ul { list-style-type: lower-roman;  color: blue}
 
 </style> --->
+![CAST current version](https://img.shields.io/badge/CAST-v0.2-blue) ![Python_version](https://img.shields.io/static/v1?label=python&message=3.6.8&color=ff69b4&logo=python) ![Flask_version](https://img.shields.io/static/v1?label=Flask&message=1.0.2&color=blueviolet&logo=Flask)
 
 # **C**ontamination **A**ssessment and **S**ite management **T**ool (**CAST**)
 ------------------------
