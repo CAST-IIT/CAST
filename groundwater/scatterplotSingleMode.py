@@ -39,7 +39,7 @@ def create_singlePlot(lMax):
     trace1 = go.Scatter(
         x=[df['Site No.'].size / 2],
         y=[lMax],
-        name='Model Lmax',
+        name='Model <i>L<sub>Max</sub></i>',
         mode='markers',
         marker=dict(
             size=14,
@@ -50,7 +50,7 @@ def create_singlePlot(lMax):
         x=df['Site No.'],
         y=df['Plume length[m]'],
         mode='markers',
-        name='Original Database Plume Length(LMax)',
+        name= 'Original Database Plume Length (<i>L<sub>Max</sub></i>)',
         marker=dict(
             size=14,
             color='#ffa600'
@@ -60,7 +60,7 @@ def create_singlePlot(lMax):
         x=user_site_no_similar_data,
         y=similar_data,
         mode='markers',
-        name='Similar sites in original database',
+        name='Similar sites in original database (<i>L<sub>Max</sub></i>)',
         marker=dict(
             size=14,
             color='#FF6361'

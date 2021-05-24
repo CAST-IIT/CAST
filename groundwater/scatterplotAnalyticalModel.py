@@ -265,6 +265,7 @@ def create_HamPlotMultiple(siteList,table_data):
         xaxis=dict(
             showgrid=True,
             gridcolor='rgb(255,255,255)',
+            title='Site Number (m)',
             titlefont=dict(
                 size=18,
                 color='#7f7f7f'
@@ -273,6 +274,7 @@ def create_HamPlotMultiple(siteList,table_data):
         yaxis=dict(
             showgrid=True,
             gridcolor='rgb(255,255,255)',
+            title='Plume Length (m)',
             titlefont=dict(
                 size=18,
                 color='#7f7f7f'
@@ -330,6 +332,7 @@ def create_Liedl3DMultiple(siteList,table_data):
         xaxis=dict(
             showgrid=True,
             gridcolor='rgb(255,255,255)',
+            title='Site Number',
             titlefont=dict(
                 size=18,
                 color='#7f7f7f'
@@ -338,6 +341,7 @@ def create_Liedl3DMultiple(siteList,table_data):
         yaxis=dict(
             showgrid=True,
             gridcolor='rgb(255,255,255)',
+            title='Plume Length (m)',
             titlefont=dict(
                 size=18,
                 color='#7f7f7f'

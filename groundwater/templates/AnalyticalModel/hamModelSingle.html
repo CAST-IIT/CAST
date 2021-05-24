@@ -20,28 +20,28 @@
                 <br>
                 <form class="form-inline" action="/hamEtAlSinglePlot" method="POST">
                     <div class="form-group">
-                        1.Width (W) : <label class="sr-only">Thickness</label>
-                        <input type="number" class="form-control" id="Thickness" name="Thickness" placeholder="W" required min="0.1" max="6" step="0.001" value="5">
+                        1. Effective Width $(W)$ : <label class="sr-only">Thickness</label>
+                        <input type="number" class="form-control" id="Thickness" name="Thickness" placeholder="W" required min="0.1" max="6" step="0.001" value="5"> m
                     </div>
                     <br><br>
                     <div class="form-group">
-                        2.Horizontal Dispersivity (Ath) : <label class="sr-only">Dispersivity</label>
-                        <input type="number" class="form-control" id="Dispersivity" name="Dispersivity" placeholder="Ath" required min="0.0001" max="0.01" step="0.0001" value="0.01">
+                        2. Horizontal Dispersivity $(\alpha_{Tv})$ : <label class="sr-only">Dispersivity</label>
+                        <input type="number" class="form-control" id="Dispersivity" name="Dispersivity" placeholder="Ath" required min="0.0001" max="0.01" step="0.0001" value="0.01"> m
                     </div>
                     <br><br>
                     <div class="form-group">
-                        3.Electron Acceptor (Ca) : <label class="sr-only">Acceptor</label>
-                        <input type="number" class="form-control" id="Acceptor" name="Acceptor" placeholder="Ca" required min=0 step="any" value="8">
+                        3. Electron Acceptor $(C_{EA}^°)$ : <label class="sr-only">Acceptor</label>
+                        <input type="number" class="form-control" id="Acceptor" name="Acceptor" placeholder="Ca" required min=0 step="any" value="8"> mg/L
                     </div>
                     <br><br>
                      <div class="form-group">
-                        4.Gamma (g) : <label class="sr-only">Stoichiometric</label>
+                        4. Gamma $(\gamma)$ : <label class="sr-only">Stoichiometric</label>
                         <input type="number" class="form-control" name="Stoichiometric" id="Stoichiometric" placeholder="a" required min=0 step="any" value="3.5">
                     </div>
                     <br><br>
                     <div class="form-group">
-                        5.Electron Donor (Cd) : <label class="sr-only">Donor</label>
-                        <input type="number" class="form-control" id="Donor" name="Donor" placeholder="Cd" required min=0 step="any" value="5">
+                        5. Electron Donor $(C_{ED}^°)$ : <label class="sr-only">Donor</label>
+                        <input type="number" class="form-control" id="Donor" name="Donor" placeholder="Cd" required min=0 step="any" value="5"> mg/L
                     </div>
                     <br><br>
                 <div>
