@@ -4,7 +4,3 @@ venv
 groundwater/__pycache__/
 groundwater/NumericalModel/__pycache__/
 __pycache__
-
-groundwater/config.py
-groundwater/NumericalModel/numericalModel.py
-groundwater/water.py
