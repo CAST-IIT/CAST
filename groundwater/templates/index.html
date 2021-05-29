@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
@@ -19,7 +20,7 @@
     <link rel="stylesheet" href="/static/css/templatemo-style.css">
 
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <!-- <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script> -->
 
 <style>
         .box{
@@ -80,7 +81,7 @@
             <nav class="tm-main-nav">
                 <ul class="tm-main-nav-ul">
                     <li class="tm-nav-item"><a href="#welcome" class="tm-nav-item-link tm-button">
-                        <i class="fa fa-smile-o tm-nav-fa"></i>Introduction</a>
+                        <i class="fa fa-tasks tm-nav-fa"></i>Introduction</a>
                     </li>
                     <li class="tm-nav-item">
                         <a href="#gallery" class="tm-nav-item-link tm-button">
@@ -88,10 +89,10 @@
                                 style="display: inline-block; width: 80%">Groundwater quality assessment toolboxes</span></a>
 
                     </li>
-                    <li class="tm-nav-item"><a href="#services" class="tm-nav-item-link tm-button">
+                    <!-- <li class="tm-nav-item"><a href="#services" class="tm-nav-item-link tm-button">
                         <i class="fa fa-tasks tm-nav-fa" style="display: inline-block"></i><span
                             style="display: inline-block; width: 80%">Other water quality toolboxes</span></a>
-                    </li>
+                    </li> -->
                     <li class="tm-nav-item"><a href="#about" class="tm-nav-item-link tm-button">
                         <i class="fa fa-sitemap tm-nav-fa"></i>Documentations</a>
                     </li>
@@ -116,9 +117,8 @@
                     </div>
                     <div class="tm-welcome-box">
                         <div class="tm-welcome-text">
-                            <h2 class="tm-section-title">The Groundwater Assessment Toolboxes</h2>
-                            <p>This site provides different models that can be used for the assessment of contaminated
-                                site ...
+                            <h2 class="tm-section-title">Groundwater Contamination and Assessment</h2>
+                            <p>This site provides different models that can be used for the assessment..</p>
                         </div>
                         <a href="{{ url_for('about_plume') }}" class="tm-welcome-link tm-button">Read Details</a>
                     </div>
@@ -144,20 +144,24 @@
                 </a>
             </div>
             <div class="tool">
-                <a href="{{ url_for('numericalModel')}}">
+                <a href="{{ url_for('documentationNumerical')}}">
                 <div class="box">
                     <img src="/static/num.jpg" width="200"/>
                 </div>
                 </a>
+                <a href="{{ url_for('documentationModelSelection')}}">
                 <div class="box">
                     <img src="/static/two.jpg" width="200"/>
                 </div>
+                </a>
+                <a href="{{ url_for('documentationResourcesLink')}}">
                 <div class="box">
                     <img src="/static/three.jpg" width="200" />
                 </div>
+                </a>
             </div>
             <br><br>
-            <div id="services" class="tm-content-box tm-gray-bg tm-services">
+            <!-- <div id="services" class="tm-content-box tm-gray-bg tm-services">
 
                 <div class="tm-services-img-container">
                     <img src="/static/tools.jpg" alt="Green Field" class="img-fluid tm-services-img">
@@ -178,30 +182,24 @@
                     <p>These above toolboxes complement the toolboxes provided in this site.</p>
                 </div>
 
-            </div>
+            </div> -->
 
             <!-- slider -->
             <div id="about" class="tm-content-box">
                 <div class="tm-box-pad tm-bordered-box">
                     <h2 class="tm-section-title">User's guide & Documentation</h2>
-                    <p>The links below provide complete detail's required to use and develop the tools provided in this
-                        site.
-                        The suggested work-flow for using the tools is as follows:
-                    <ol>
-                        <li>Start with the Database Toolbox</li>
-                        <li>Follow then to Analytical model Toolbox or Empirical model toolbox, and then</li>
-                        <li>Numerical model toolbox</li>
-                    </ol>
-                    <p>The Decision Toolbox (not implemented yet) and the Other toolboxes do not require any work flow.
-                        The User’s guide (not complete) will contain details on how to use the toolbox correctly with
-                        examples. Also, will include examples and case studies.
-                        The complete documentation will include also details on further development of the codes, adding
-                        new modules etc.</p>
-                    <h2><a id="NOTE_16"></a>NOTE:</h2>
-                    <p>The authors of this site and the organizations supporting the development are not in
-                        any way responsible for the results obtained using the tools provide in the site.</p><br>
-                    <a href="{{ url_for('user_guide') }}" class="tm-button-doc tm-button-normal">User's guide </a>
-                    <a href="{{ url_for('complete_documentation') }}" class="tm-button-doc tm-button-normal">Complete Documentation</a>
+                    <p>The documentation links below provide complete detail's required to use, modify and re-develop tools provided in this site. The suggested work-flow for using CAST tools is as follows:</p>
+<ol>
+<li>Start with the Database Toolbox</li>
+<li>Follow then to Analytical Model Toolbox or Empirical Model toolbox, and then</li>
+<li>Numerical model toolbox</li>
+</ol>
+<p>User need to register to the CAST website to use CAST toolboxes. Registration requires few users data such as name, email addresses etc, which are not cross-verified. Registration are required for computational data storage process. Documentation provide complete details on registration.</p>
+<p>The <strong>Model Selection Toolbox</strong> (is not implemented yet) and the <strong>Resources and Links</strong> toolbox (under development)  do not require any work flow.</p>
+                    <h2><strong>NOTE:</strong></h2>
+                    <p>The authors of this site and the organizations supporting the development are not in any way responsible for the results obtained using the tools provide in the site.</p><br>
+                    <!-- <a href="{{ url_for('user_guide') }}" class="tm-button-doc tm-button-normal">User's guide </a> -->
+                    <a href="https://prabhasyadav.github.io/CASTbook/intro.html" class="tm-button-doc tm-button-normal" target="_blank" rel='noopener noreferrer'>Complete Documentation</a>
                     <a href="{{ url_for('credits') }}" class="tm-button-doc tm-button-normal">Credits </a>
                 </div>
             </div>
@@ -242,11 +240,11 @@
                 <div class="tm-contact-right-half tm-purple-bg">
                     <div class="tm-address-box">
                         <h2 class="tm-section-title"><b>Supported By :</b></h2>
-                        <p><img src="/static/muj.png" height="100" width=auto align="left">&nbsp;</p><br><br><br>
+                        <p><img src="/static/TU_Dresden_Logo_weiss.png" height=auto width="200" align="left">&nbsp;<br>&nbsp;</p><br>
                         <p><img src="/static/IITD.png" height="100" width=auto align="left">&nbsp;Indian Institute
                             of Technology<br>&nbsp;Delhi</p><br><br>
-                        <p><img src="/static/TU_Dresden_Logo_weiss.png" height=auto width="200"
-                                align="left">&nbsp;<br>&nbsp;</p><br>
+                            <p><img src="/static/DFG.png" height=auto width="150" align="left">&nbsp;<br>&nbsp;</p>
+                        <p><img src="/static/muj.png" height="100" width=auto align="left">&nbsp;</p><br><br><br>
                     </div>
                 </div>
             </div>

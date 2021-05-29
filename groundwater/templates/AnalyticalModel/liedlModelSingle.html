@@ -20,28 +20,28 @@
                 <br>
                 <form class="form-inline" action="/random-name/" method="POST">
                     <div class="form-group">
-                        1.Thickness (M) :<label class="sr-only">Thickness</label>
-                        <input type="number" value="2" class="form-control" id="Thickness" name="Thickness" placeholder="M" required min="0.1" max="6.1" step="0.001">
+                        1. Thickness $(M)$ :<label class="sr-only">Thickness</label>
+                        <input type="number" value="2" class="form-control" id="Thickness" name="Thickness" placeholder="M" required min="0.1" max="6.1" step="0.001"> m
                     </div>
                     <br><br>
                     <div class="form-group">
-                        2.Dispersivity (TV) :<label class="sr-only">Dispersivity</label>
-                        <input type="number" class="form-control" id="Dispersivity" name="Dispersivity" placeholder="TV" required min="0.0001" max="0.01" step="0.0001" value="0.001">
+                        2. Dispersivity $(\alpha_{Tv})$ :<label class="sr-only">Dispersivity</label>
+                        <input type="number" class="form-control" id="Dispersivity" name="Dispersivity" placeholder="TV" required min="0.0001" max="0.01" step="0.0001" value="0.001"> m
                     </div>
                     <br><br>
                     <div class="form-group">
-                        3.Stoichiometric Ratio (Alpha) : <label class="sr-only">Stoichiometric</label>
-                        <input type="number" class="form-control" id="Stoichiometric" name="Stoichiometric" placeholder="Alpha" required min=0 step="any" value="3.5">
+                        3. Stoichiometric Ratio $(\gamma)$ : <label class="sr-only">Stoichiometric</label>
+                        <input type="number" class="form-control" id="Stoichiometric" name="Stoichiometric" placeholder="Alpha" required min=0 step="any" value="3.5"> m
                     </div>
                     <br><br>
                     <div class="form-group">
-                        4.Electron Acceptor (Ca) : <label class="sr-only">Acceptor</label>
-                        <input type="number" class="form-control" id="Acceptor" name="Acceptor" placeholder="Ca" required min=0 step="any" value="8">
+                        4. Electron Acceptor $(C_{EA}^\circ)$ : <label class="sr-only">Acceptor</label>
+                        <input type="number" class="form-control" id="Acceptor" name="Acceptor" placeholder="Ca" required min=0 step="any" value="8"> mg/l
                     </div>
                     <br><br>
                     <div class="form-group">
-                        5.Electron Donor (Cd) : <label class="sr-only">Donor</label>
-                        <input type="number" class="form-control" id="Donor" name="Donor" placeholder="Cd" required min=0 step="any" value="5">
+                        5. Electron Donor $(C_{ED}^\circ)$ : <label class="sr-only">Donor</label>
+                        <input type="number" class="form-control" id="Donor" name="Donor" placeholder="Cd" required min=0 step="any" value="5"> mg/l
                     </div>
                     <br><br>
                 <div>
@@ -52,12 +52,12 @@
                     <div id="successAlert" class="alert alert-success" role="alert" style="display:none;"></div>
                 <div class="grid-container">
                     <div id="sliderThickness" class="slidecontainer" style="display: none">
-                    <label> Thickness </label>
+                    <label> Thickness (m)</label>
                     <input type="range" min="0.1" max="6.1" step="0.001" class="slider" id='scatterplot_fits'>
                     <p>Value: <span id="thicknessVal"></span></p>
                 </div>
                 <div id="sliderDispersivity" class="slidecontainer" style="display: none">
-                    <label>Dispersivity </label>
+                    <label>Dispersivity (m)</label>
                     <input type="range" min="0.0001" max="0.01" step="0.0001" class="slider" id='parameters'>
                     <p>Value: <span id="dispersivityVal"></span></p>
                 </div>
@@ -65,6 +65,7 @@
             </div>
             <div class="col-lg-6 col-sm-6 col-xs-6">
                 <button class="btn btn-primary" id="fullScreen">View full screen graph</button>
+                <a href="{{ url_for('statistics')}}"><button class="btn btn-primary"style="margin-bottom:10px;">Statistics for Data</button></a>
                 <div id="response">
                     <div class="graph" id="year_histogram">
                         <script>
@@ -73,6 +74,7 @@
                         </script>
                     </div>
                 </div>
+                <br>
             </div>
         </div>
     </div>

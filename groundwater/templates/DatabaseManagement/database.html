@@ -20,7 +20,7 @@
             background: #f1f1f1;
         }
         th, td{
-            height = "10"
+            height : "10";
         }
         th{
             border-bottom: 1px solid #d4d4d4;
@@ -144,6 +144,7 @@
                   <input name="file" type="file" class="btn btn-light btn-lg"/>
                   <button type="submit" name="upload" id="upload" class="btn btn-light">Upload</button>
                 <button type="submit" name="delete" id="delete" class="btn btn-light">Delete table data</button>
+                <!-- <button type="submit" name="similar_sites" id="similar_sites" class="btn btn-light">Similar sites in the database</button> -->
               <button type="button" class="btn btn-light" id="add" data-toggle="modal" data-target="#myModal">Add Data
         </button>
                 </form>
@@ -165,6 +166,25 @@
                     {% endfor %}
                     </tbody>
                 </table>
+                <h3>Similar sites in the Database</h3>
+                <table class="table content-section display" id="similar-data-table">
+                  <thead class="thead-light">
+                  <tr>
+                      {% for name in column_names %}
+                          <th scope="col">{{ name }}</th>
+                      {% endfor %}
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for data in similar_data %}
+                      <tr id="{{ data[0] }}_table">
+                          {% for value in data %}
+                              <td>{{ value }}</td>
+                          {% endfor %}
+                      </tr>
+                  {% endfor %}
+                  </tbody>
+              </table>
         <div id="myModal" class="modal fade" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">

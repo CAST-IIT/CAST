@@ -187,6 +187,17 @@ def database():
         if data == -1:
             data = None
         return data
+    def similar_data_points(table_data):
+        for col in df.columns:
+            if df[col].dtype == 'float64':
+                df[col] = df[col].round(7)
+        compound_names = [item[2] for item in table_data]
+        chem_group_name = [item[13] for item in table_data]
+        for (i,j) in zip(compound_names,chem_group_name):
+            similar_data = df[(df['Compound'].str.lower() == i.lower()) & (df['Chem. Group'].str.lower()==j.lower())]
+        if not compound_names:
+            return []
+        return similar_data.to_numpy()
     if "open" in request.form:
         if request.method == 'POST':
             Aquifer_thickness = check_null(float(request.form["aqui"]))
@@ -223,7 +234,7 @@ def database():
             flash(f'Successfully deleted all data', category='success')
             return redirect('/database')
     return render_template('DatabaseManagement/database.html', table_data=table_data,
-                           column_names=Parameters.User_data_columns)
+                           column_names=Parameters.User_data_columns,similar_data=similar_data_points(table_data))
 
 
 
@@ -317,13 +328,26 @@ def scatterplot():
 
 @app.route('/statistics', methods=['POST', 'GET'])
 def statistics():
+    table_data = user_database(current_user.id)
     sa = pd.read_csv('groundwater/static/original.csv')
     sa = sa[sa['SO4[mg/l]'] != 'depleted']
     sa = sa[sa['NO3[mg/l]'] != 'depleted']
     sa_final = sa.drop(['Site No.', 'Site Unit', 'Compound', 'Plume state', 'Chem. Group', 'Country',
                         'Literature Source'], axis=1)
     data = sa_final.astype(float).describe()
-    return render_template('DatabaseManagement/statistics.html', data=data)
+    compound_names = [item[2] for item in table_data]
+    chem_group_name = [item[13] for item in table_data]
+    for (i,j) in zip(compound_names,chem_group_name):
+        similar_data = df[(df['Compound'].str.lower() == i.lower()) & (df['Chem. Group'].str.lower()==j.lower())]
+    if not compound_names:
+        similar_data = []
+    else:
+        similar_data = similar_data[similar_data['SO4[mg/l]'] != 'depleted']
+        similar_data = similar_data[similar_data['NO3[mg/l]'] != 'depleted']
+        similar_data = similar_data.drop(['Site No.', 'Site Unit', 'Compound', 'Plume state', 'Chem. Group', 'Country',
+                        'Literature Source'], axis=1)
+        similar_data = similar_data.astype(float).describe()
+    return render_template('DatabaseManagement/statistics.html', data=data,similar_data=similar_data)
 
 
 @app.route('/analyticalModel', methods=['POST', 'GET'])
@@ -1017,3 +1041,13 @@ def numericalModel():
         os.chdir("..")
         shutil.rmtree(path)
     return render_template('NumericalModel/numericalNew.html', form=form, bool=bool)
+
+
+@app.route('/documentationModelSelection', methods=['GET', 'POST'])
+def documentationModelSelection():
+    return render_template('IndexDocumentation/model_selection.html')
+
+
+@app.route('/documentationResourcesLink', methods=['GET', 'POST'])
+def documentationResourcesLink():
+    return render_template('IndexDocumentation/groundwater_resources_links.html')

@@ -14,7 +14,22 @@ console.log("Selected row id's : " + selectedRowIds);
 $(document).ready(function () {
     let table = $('#data-table').DataTable({
         "lengthChange": false,
-        "pageLength": 50,
+        "lengthMenu":[ [5,10, 20, 50, -1], [5,10, 20, 50, "All"]],
+        "columnDefs": [
+            {
+                "targets": [0],
+                "visible": false,
+            },
+        ],
+        dom: 'Bfrtip',
+        buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+        "scrollY": true,
+        "scrollX": true,
+    });
+    let table_similar = $('#similar-data-table').DataTable({
+        "lengthChange": false,
+        // "pageLength": 10,
+        "lengthMenu":[ [5,10, 20, 50, -1], [5,10, 20, 50, "All"]],
         "columnDefs": [
             {
                 "targets": [0],
@@ -31,6 +46,9 @@ $(document).ready(function () {
     // row id in the database table
     let idColumn = table.column('id');
     idColumn.visible(!idColumn.visible);
+
+    let idColumnSimilar = table_similar.column('id');
+    idColumnSimilar.visible(!idColumnSimilar.visible);
 
     for (let i = 0; i < selectedRowIds.length; i++) {
         // There is an already selected row in the table
