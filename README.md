@@ -135,4 +135,6 @@ Coming soon ...,
  > Display of all Analytical Models
 
 
-### More to be continued...  ###
+### Publication
+
+Yadav, P. K., S. Birla, V. Baliga, R. Liedl, B. R. Chahar, and C. J. Werth. 2022. Contamination Assessment and Site‐Management Tool (CAST): A Browser‐Based Tool for Site Assessment. Groundwater 60, no. 2: 275–83, [https://doi.org/10.1111/gwat.13137](https://doi.org/10.1111/gwat.13137).
